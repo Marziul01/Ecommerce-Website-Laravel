@@ -248,4 +248,8 @@ background-position: 0 0;
     .sidebar .nav-item .nav-link span{
         display: inline; 
     }
+    .mobile-rows-dash, .mobile-rows-dash .col-md-4{
+        padding-right: 0px !important;
+        margin-right: 0px !important;
+    }
 }

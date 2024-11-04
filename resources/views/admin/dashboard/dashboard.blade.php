@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 h-100 row">
+            <div class="col-md-8 h-100 row mobile-rows-dash">
                 <div class="col-md-4 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <a class="card-body dashboard-a">
