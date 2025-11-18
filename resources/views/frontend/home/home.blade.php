@@ -92,7 +92,7 @@
     </section>
     <section class="popular-categories section-padding mt-15 mb-25">
         <div class="container wow fadeIn animated">
-            <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
+            <h3 class="section-title mb-20"><span>Popular</span> Categories1</h3>
             <div class="owl-carousel slider_carousel">
 {{--                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows"></div>--}}
 {{--                <div class="carausel-6-columns" id="carausel-6-columns">--}}
