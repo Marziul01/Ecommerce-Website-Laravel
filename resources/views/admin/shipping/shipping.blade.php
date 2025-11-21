@@ -97,14 +97,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group" id="shipping_area_group" style="display: none;">
+                        <div class="form-group admin-shipping-form">
+                            <label>Select Area</label><br>
+                            <select class="form-control select2 w-100" name="district[]" id="district" multiple="multiple">
+                                <option value="">Select Area *</option>
+                                @foreach($districts as $district)
+                                    <option value="{{ $district->name }}">{{ $district->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- <div class="form-group" id="shipping_area_group" style="display: none;">
                             <label for="exampleInputEmail1">Shipping Area *</label>
                             <select class="form-control" name="shipping_area" id="shipping_type">
                                 <option value="">Select Area</option>
                                 <option value="Inside Dhaka">Inside Dhaka</option>
                                 <option value="Outside Dhaka">Outside Dhaka</option>
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="form-group" id="price_group">
                             <label for="exampleInputEmail1">Price *</label>
                             <input type="number" class="form-control" name="price">
@@ -227,7 +236,14 @@
             $("#exampleType").css("pointer-events", "none");
         });
     </script>
-
+<script>
+    $(document).ready(function() {
+    $('#district').select2({
+        placeholder: "Select Area *",
+        allowClear: true,
+    });
+});
+</script>
 
 
 @endsection

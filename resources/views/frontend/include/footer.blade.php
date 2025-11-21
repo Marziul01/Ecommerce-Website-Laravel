@@ -94,11 +94,11 @@
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-lg-6">
-                <p class="float-md-left font-sm text-muted mb-0">&copy; 2023, <strong class="text-brand">{{ $siteSettings->title }}</strong> </p>
+                <p class="float-md-left font-sm text-muted mb-0">&copy; 2024, <strong class="text-brand">{{ $siteSettings->title }}</strong> </p>
             </div>
             <div class="col-lg-6">
                 <p class="text-lg-end text-start font-sm text-muted mb-0">
-                    Designed by <a href="http://marziul.com/" target="_blank">Marziul.com</a>. All rights reserved.
+                    {{-- Designed by <a href="http://marziul.com/" target="_blank">Marziul.com</a>. --}} All rights reserved. 
                 </p>
             </div>
         </div>

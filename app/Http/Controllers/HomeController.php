@@ -8,6 +8,7 @@ use App\Models\HomeSetting;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\SiteSetting;
+use App\Models\Slider;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -66,7 +67,8 @@ class HomeController extends Controller
             'cartContent' => Cart::content(),
             'products' => Product::where('status', 1 )->get(),
             'userId' => $userId,
-            'mostOrderedProducts' => $mostOrderedProducts
+            'mostOrderedProducts' => $mostOrderedProducts,
+            'sliders' => Slider::all(),
         ]);
     }
 }

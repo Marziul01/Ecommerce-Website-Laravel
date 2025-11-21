@@ -44,16 +44,18 @@
                             <h6>Order Status:</h6>
                             <h4 class="mt-2">
                                 @if($order->status == 1)
-                                    Processing
-                                @elseif($order->status == 2)
-                                    Cancelled
-                                    <br>
-                                    <span class="text-danger">(" {{ $order->reason }} ")</span>
-                                @elseif($order->status == 3)
-                                    Out for Delivery
-                                @elseif($order->status == 4)
-                                    Delivered
-                                @endif
+                                        Pending
+                                    @elseif($order->status == 2)
+                                        Cancelled
+                                        <br>
+                                        <span class="text-danger font-sm">(" {{ $order->reason }} ")</span>
+                                    @elseif($order->status == 3)
+                                        Processing
+                                    @elseif($order->status == 4)
+                                        Shipped
+                                    @elseif($order->status == 5)
+                                        Delivered
+                                    @endif
                             </h4>
                         </div>
                         <div>
@@ -113,7 +115,9 @@
                             <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                             <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
-                            <p> Payment Method : @if($order->payment_option == 'cod') Cash On Delivery @endif </p>
+                            <p> Payment Method : {{ $order->payment_option }} </p>
+                            <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                            <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
                         </div>
                         <div class="col-md-2 d-flex flex-column align-items-center mobile-price-width">
                             <p class="text-center"> SubTotal : <strong>{{ $order->subtotal }} Tk </strong></p>

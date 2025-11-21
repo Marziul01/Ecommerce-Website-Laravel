@@ -39,15 +39,27 @@
                                 <h6>Order Status:</h6>
                                 <h5 class="mt-3">
                                     @if($order->status == 1)
-                                        Processing
+                                        Pending
                                     @elseif($order->status == 2)
                                         Cancelled
                                         <br>
                                         <span class="text-danger font-sm">(" {{ $order->reason }} ")</span>
                                     @elseif($order->status == 3)
-                                        Out for Delivery
+                                        Processing
                                     @elseif($order->status == 4)
+                                        Shipped
+                                    @elseif($order->status == 5)
                                         Delivered
+                                    @elseif($order->status == 6)
+                                        Order Return & Refund Requested
+                                        <br>
+                                        <p>" Our Team will contact with you regarding the returning order process. "</p>
+                                    @elseif($order->status == 7)
+                                        Order Returened and Refunded
+                                    @elseif($order->status == 8)
+                                        Delivered
+                                        <br>
+                                        <p>" Sorry You Can't return this order. "</p>
                                     @endif
                                 </h5>
                             </div>
@@ -111,7 +123,9 @@
                                 <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                                 <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
-                                <p> Payment Method : @if($order->payment_option == 'cod') Cash On Delivery @endif </p>
+                                <p> Payment Method : {{ $order->payment_option }} </p>
+                                <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                                <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
                             </div>
                             <div class="col-md-2 d-flex flex-column align-items-center mobile-price-width">
                                 <p class="text-center"> SubTotal : <strong>{{ $order->subtotal }} Tk </strong> </p>
@@ -124,27 +138,35 @@
                 </div>
             </div>
             <div class="col-md-2" style="padding: 0px !important;">
+                @if (!in_array($order->status, [6, 7, 8]))
                 <div class="card p-2 pt-3 pb-3 mt-2">
                     <h6 class="text-center"> Invoice </h6>
                     <a class="btn btn-primary" href="{{ asset($order->invoice) }}" target="_blank"> View Invoice </a>
                 </div>
-
+                @endif
                 <div class="card p-2 pt-3 pb-3">
                     <h6 class="text-center"> Order Status </h6>
                     <form method="post" action="{{ route('order-status-update', $order->id) }}" >
                         @csrf
                         <select class="form-control select-bottom-icon" name="status" id="order-status">
+                            @if (!in_array($order->status, [6, 7, 8]))
                             <option value="1" @if($order->status == 1) selected @endif > Pending </option>
                             <option value="2" @if($order->status == 2) selected @endif> Cancel </option>
-                            <option value="3" @if($order->status == 3) selected @endif> Out for Delivery </option>
-                            <option value="4" @if($order->status == 4) selected @endif> Delivered </option>
+                            <option value="3" @if($order->status == 3) selected @endif> Processing </option>
+                            <option value="4" @if($order->status == 4) selected @endif> Shipped </option>
+                            <option value="5" @if($order->status == 5) selected @endif> Delivered </option>
+                            @endif
+                            @if (in_array($order->status, [6, 7, 8]))
+                            <option value="7" @if($order->status == 7) selected @endif> Accept Return Request </option>
+                            <option value="8" @if($order->status == 8) selected @endif> Cancel Return Request </option>
+                            @endif
                         </select>
                         <input name="reason" class="form-control mt-2" id="cancel-reason" value="{{ $order->reason }}" placeholder=" Write Cancel Reason !" style="display:none">
                         <i class="bi bi-chevron-down select-bottom-icon-icon"></i>
                         <button type="submit" class="btn btn-sm btn-success mt-2"> Update Status </button>
                     </form>
                 </div>
-
+                @if (!in_array($order->status, [6, 7, 8]))
                 <div class="card p-2 pt-3 pb-3 mt-2">
                     <h6 class="text-center"> Payment Status </h6>
                     <form method="post" action="{{ route('order-paymentStatus-update', $order->id) }}">
@@ -157,6 +179,7 @@
                         <button type="submit" class="btn btn-sm btn-success mt-2">Update Status</button>
                     </form>
                 </div>
+                @endif
             </div>
         </section>
     </div>

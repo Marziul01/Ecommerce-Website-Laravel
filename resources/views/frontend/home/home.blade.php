@@ -18,81 +18,27 @@
     @include('frontend.auth.frontMessage')
     <section class="home-slider position-relative pt-50">
         <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
-            @if($homeSettings->status == 1)
-                <div class="single-hero-slider single-animation-wrap">
-                <div class="container">
+            @if($sliders->isNotEmpty())
+            @foreach ( $sliders as $slider )
+            <div class="single-hero-slider single-animation-wrap"  >
+                <div class="container sliders-bg-size-mb" style="background-image: url(' {{ asset($slider->image) }} '); background-size: cover; background-position: top center; height: 450px">
                     <div class="row align-items-center slider-animated-1">
-                        <div class="col-lg-5 col-md-6">
-                            <div class="hero-slider-content-2">
-                                <h4 class="animated" style="color: {{ $homeSettings->color }};">{{ $homeSettings->title }}</h4>
-                                <h2 class="animated fw-900" style="color: {{ $homeSettings->color }};">{{ $homeSettings->subtitle }}</h2>
-                                <h1 class="animated fw-900 text-brand" style="color: {{ $homeSettings->detailsColor }};">{{ $homeSettings->details }}</h1>
-                                <p class="animated" style="color: {{ $homeSettings->color }};">{{ $homeSettings->description }}</p>
-                                <a class="animated btn btn-brush btn-brush-3" href="{{ $homeSettings->offerLink }}">  {{ $homeSettings->offerText }} </a>
-                            </div>
-                        </div>
                         <div class="col-lg-7 col-md-6">
-                            <div class="single-slider-img single-slider-img-1">
-                                <img class="animated slider-1-1" src="{{ asset($homeSettings->image) }}">
-                            </div>
+                            {{-- <div class="single-slider-img single-slider-img-1">
+                                <img class="animated slider-1-1" src="{{ asset($slider->image) }}">
+                            </div> --}}
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
+            @endforeach
             @endif
-
-            @if($slider2->status == 1)
-                <div class="single-hero-slider single-animation-wrap">
-                        <div class="container">
-                            <div class="row align-items-center slider-animated-1">
-                                <div class="col-lg-5 col-md-6">
-                                    <div class="hero-slider-content-2">
-                                        <h4 class="animated" style="color: {{ $slider2->color }};">{{ $slider2->title }}</h4>
-                                        <h2 class="animated fw-900" style="color: {{ $slider2->color }};">{{ $slider2->subtitle }}</h2>
-                                        <h1 class="animated fw-900 text-brand" style="color: {{ $slider2->detailsColor }};">{{ $slider2->details }}</h1>
-                                        <p class="animated" style="color: {{ $slider2->color }};">{{ $slider2->description }}</p>
-                                        <a class="animated btn btn-brush btn-brush-3" href="{{ $slider2->offerLink }}">  {{ $slider2->offerText }} </a>
-                                    </div>
-                                </div>
-                                <div class="col-lg-7 col-md-6">
-                                    <div class="single-slider-img single-slider-img-1">
-                                        <img class="animated slider-1-1" src="{{ asset($slider2->image) }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            @endif
-
-            @if($slider3->status == 1)
-                <div class="single-hero-slider single-animation-wrap">
-                        <div class="container">
-                            <div class="row align-items-center slider-animated-1">
-                                <div class="col-lg-5 col-md-6">
-                                    <div class="hero-slider-content-2">
-                                        <h4 class="animated" style="color: {{ $slider3->color }};">{{ $slider3->title }}</h4>
-                                        <h2 class="animated fw-900" style="color: {{ $slider3->color }};">{{ $slider3->subtitle }}</h2>
-                                        <h1 class="animated fw-900 text-brand" style="color: {{ $slider3->detailsColor }};">{{ $slider3->details }}</h1>
-                                        <p class="animated" style="color: {{ $slider3->color }};">{{ $slider3->description }}</p>
-                                        <a class="animated btn btn-brush btn-brush-3" href="{{ $slider3->offerLink }}">  {{ $slider3->offerText }} </a>
-                                    </div>
-                                </div>
-                                <div class="col-lg-7 col-md-6">
-                                    <div class="single-slider-img single-slider-img-1">
-                                        <img class="animated slider-1-1" src="{{ asset($slider3->image) }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            @endif
-
         </div>
         <div class="slider-arrow hero-slider-1-arrow"></div>
     </section>
     <section class="popular-categories section-padding mt-15 mb-25">
         <div class="container wow fadeIn animated">
-            <h3 class="section-title mb-20"><span>Popular</span> Categories1</h3>
+            <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
             <div class="owl-carousel slider_carousel">
 {{--                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows"></div>--}}
 {{--                <div class="carausel-6-columns" id="carausel-6-columns">--}}

@@ -106,7 +106,7 @@
                         <p> Address: {{ $orderData['order']->address }} , {{ $orderData['order']->state }} , {{ $orderData['order']->country->name }}</p>
 
                         <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
-                        <p> Payment Method : @if($orderData['order']->payment_option == 'cod') Cash On Delivery @endif </p>
+                        <p> Payment Method : {{ $orderData['order']->payment_option }} </p>
                     </div>
                     <div class="col-md-2 flex-column align-items-center justify-content-around" style="border-bottom: 0px !important; flex-direction: column;">
                         <p class=""> SubTotal : <strong>{{ $orderData['order']->subtotal }} Tk </strong> </p>

@@ -75,7 +75,7 @@
                                                 <table class="table">
                                                     <thead>
                                                     <tr>
-                                                        <th>Order</th>
+                                                        <th>OrderID</th>
                                                         <th>Date</th>
                                                         <th>Status</th>
                                                         <th>Payment Status</th>
@@ -91,13 +91,24 @@
                                                         <td>{{ $order->created_at->format('Y-m-d') }}</td>
                                                         <td>
                                                             @if($order->status == 1)
-                                                                Processing
+                                                                Pending
                                                             @elseif($order->status == 2)
                                                                 Cancelled
+                                                                
                                                             @elseif($order->status == 3)
-                                                                Out for Delivery
+                                                                Processing
                                                             @elseif($order->status == 4)
+                                                                Shipped
+                                                            @elseif($order->status == 5)
                                                                 Delivered
+                                                            @elseif($order->status == 6)
+                                                                Order Return & Refund Requested
+                                                                
+                                                            @elseif($order->status == 7)
+                                                                Order Returened and Refunded
+                                                            @elseif($order->status == 8)
+                                                                Delivered
+                                                                
                                                             @endif
                                                         </td>
                                                         <td>
@@ -133,17 +144,62 @@
                                             <p>To track your order please enter your OrderID in the box below and press "Track" button. This was given to you on your receipt and in the confirmation email you should have received.</p>
                                             <div class="row">
                                                 <div class="col-lg-8">
-                                                    <form class="contact-form-style mt-30 mb-50" action="#" method="post">
+                                                    <form class="contact-form-style mt-30 mb-50" id="orderTrackingForm">
                                                         <div class="input-style mb-20">
                                                             <label>Order ID</label>
-                                                            <input name="order-id" placeholder="Found in your order confirmation email" type="text" class="square">
-                                                        </div>
-                                                        <div class="input-style mb-20">
-                                                            <label>Billing email</label>
-                                                            <input name="billing-email" placeholder="Email you used during checkout" type="email" class="square">
+                                                            <input name="order-id" id="orderIdInput" placeholder="Found in your order confirmation email" type="text" class="square">
                                                         </div>
                                                         <button class="submit submit-auto-width" type="submit">Track</button>
                                                     </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card order-tracking" id="orderStatusContainer" style="display: none;">
+                                        <div class="card-header">
+                                            <h5> Order Status </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="container mx-auto w-100" style="max-width: 100% !important;">
+                                                <div class="card">
+                                                    <div class="row d-flex justify-content-between px-3 top">
+                                                        <div class="d-flex">
+                                                            <h5>ORDER <span class="text-primary font-weight-bold" id="orderNumber">#</span></h5>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="row d-flex justify-content-center">
+                                                        <div class="col-12">
+                                                            <ul id="progressbar">
+                                                                <li class="text-center licion" data-status="1">
+                                                                    <i class="fa"></i> 
+                                                                    <img class="icon" src="https://i.imgur.com/9nnc9Et.png"> 
+                                                                    <br> Order Pending
+                                                                </li>
+                                                                <li class="text-center licion" data-status="2">
+                                                                    <i class="fa"></i> 
+                                                                    <img class="icon" src="{{ asset('frontend-assets/imgs/order-cancel.png') }}"> 
+                                                                    <br> Canceled
+                                                                </li>
+                                                                <li class="text-center licion" data-status="3">
+                                                                    <i class="fa"></i> 
+                                                                    <img class="icon" src="https://i.imgur.com/u1AzR7w.png"> 
+                                                                    <br> Processing
+                                                                </li>
+                                                                <li class="text-center licion" data-status="4">
+                                                                    <i class="fa"></i> 
+                                                                    <img class="icon" src="https://i.imgur.com/TkPm63y.png"> 
+                                                                    <br> Shipped
+                                                                </li>
+                                                                <li class="text-center licion" data-status="5">
+                                                                    <i class="fa"></i> 
+                                                                    <img class="icon" src="https://i.imgur.com/HdsziHP.png"> 
+                                                                    <br> Delivered
+                                                                </li>
+                                                            </ul>
+                                                            
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -157,9 +213,9 @@
                                                     <h5 class="mb-0">Billing Address</h5>
                                                 </div>
                                                 <div class="card-body">
-                                                    <address>{{ $userInfo->billing_address }}</address>
-                                                    <p>{{ $userInfo->state }} ,</p>
-                                                    <p>{{ $userInfo->country->name }}</p>
+                                                    <address>{{ $userInfo->billing_address ?? 'Add Address' }}</address>
+                                                    <p>{{ $userInfo->state ?? 'Add Address' }} ,</p>
+                                                    <p>{{ $userInfo->country->name ?? 'Add Address' }}</p>
                                                     <a data-bs-toggle="modal" data-bs-target="#EditAddressModal" class="btn btn-small">Edit</a>
                                                 </div>
                                             </div>
@@ -170,9 +226,9 @@
                                                     <h5 class="mb-0">Shipping Address</h5>
                                                 </div>
                                                 <div class="card-body">
-                                                    <address>{{ $userInfo->shipping_address }}</address>
-                                                    <p>{{ $userInfo->shipping_state }} ,</p>
-                                                    <p>{{ $userInfo->country->name }}</p>
+                                                    <address>{{ $userInfo->shipping_address ?? 'Add Address' }}</address>
+                                                    <p>{{ $userInfo->shipping_state ?? 'Add Address' }} ,</p>
+                                                    <p>{{ $userInfo->country->name ?? 'Add Address' }}</p>
                                                     <a data-bs-toggle="modal" data-bs-target="#EditShippingAddressModal" class="btn btn-small">Edit</a>
                                                 </div>
                                             </div>
@@ -191,23 +247,23 @@
                                                 <div class="row">
                                                     <div class="form-group col-md-6">
                                                         <label>First Name</label>
-                                                        <input required="" class="form-control square" name="first_name" type="text" value="{{ $userInfo->first_name }}">
+                                                        <input required="" class="form-control square" name="first_name" type="text" value="{{ $userInfo->first_name ?? null }}">
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label>Last Name</label>
-                                                        <input class="form-control square" name="last_name" value="{{ $userInfo->last_name }}">
+                                                        <input class="form-control square" name="last_name" value="{{ $userInfo->last_name ?? null }}">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label>Display Name</label>
-                                                        <input class="form-control square" name="name" type="text" value="{{ $user->name }}">
+                                                        <input class="form-control square" name="name" type="text" value="{{ $user->name ?? null }}">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label>Phone</label>
-                                                        <input class="form-control square" name="phone" type="text" value="{{ $userInfo->phone }}">
+                                                        <input class="form-control square" name="phone" type="text" value="{{ $userInfo->phone ?? null }}">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label>Email Address</label>
-                                                        <input class="form-control square" name="email" type="email" value="{{ $user->email }}">
+                                                        <input class="form-control square" name="email" type="email" value="{{ $user->email ?? null }}">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label>Current Password</label>
@@ -266,7 +322,7 @@
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Address</label>
-                            <input type="text" class="form-control" name="billing_address" value="{{ $userInfo->billing_address }}">
+                            <input type="text" class="form-control" name="billing_address" value="{{ $userInfo->billing_address ?? null }}">
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -304,7 +360,7 @@
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Address</label>
-                            <input type="text" class="form-control" name="shipping_address" value="{{ $userInfo->shipping_address }}">
+                            <input type="text" class="form-control" name="shipping_address" value="{{ $userInfo->shipping_address ?? null }}">
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -329,5 +385,104 @@
             }
         });
     </script>
+
+
+<script>
+    document.getElementById("orderTrackingForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const orderId = document.getElementById("orderIdInput").value.trim();
+        if (!orderId) {
+            alert("Please enter a valid Order ID.");
+            return;
+        }
+
+        // Hide the order status container while fetching
+        document.getElementById("orderStatusContainer").style.display = "none";
+
+        // Make AJAX request to fetch order status
+        fetch("{{ route('get-order-status') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({ orderId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    const { orderNumber, status } = data.order;
+
+                    // Update order details
+                    document.getElementById("orderNumber").innerText = `#${orderNumber}`;
+
+                    // Update progress bar based on status
+                    updateProgressBar(status);
+
+                    // Show the order status container
+                    document.getElementById("orderStatusContainer").style.display = "block";
+                } else {
+                    alert(data.message || "Order not found.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while fetching the order status.");
+            });
+    });
+
+    function updateProgressBar(status) {
+        const progressSteps = document.querySelectorAll("#progressbar li");
+        const canceledStep = document.querySelector("#progressbar li[data-status='2']");
+
+        // Reset all steps
+        progressSteps.forEach((step) => {
+            step.classList.remove("active", "hidden");
+            step.querySelector("i").className = ""; // Reset icons
+        });
+
+        // Hide the "Canceled" step by default
+        if (canceledStep) {
+            canceledStep.classList.add("hidden");
+        }
+
+        if (status === 2) {
+            // Handle canceled order
+            if (canceledStep) {
+                canceledStep.classList.remove("hidden");
+            }
+            progressSteps.forEach((step, index) => {
+                if (index === 1) {
+                    // Mark the "Canceled" step as completed
+                    step.classList.add("active");
+                    step.querySelector("i").classList.add("fa-check-circle");
+                } else if (index > 1) {
+                    // Hide steps after "Canceled"
+                    step.classList.add("hidden");
+                } else {
+                    // Complete steps before "Canceled"
+                    step.classList.add("active");
+                    step.querySelector("i").classList.add("fa-check-circle");
+                }
+            });
+        } else {
+            // Handle normal statuses
+            progressSteps.forEach((step, index) => {
+                if (index < status) {
+                    // Mark as completed
+                    step.classList.add("active");
+                    step.querySelector("i").classList.add("fa-check-circle");
+                } else {
+                    // Mark as incomplete
+                    step.querySelector("i").classList.add("fa-times-circle");
+                }
+            });
+        }
+    }
+</script>
+
+
+
 
 @endsection

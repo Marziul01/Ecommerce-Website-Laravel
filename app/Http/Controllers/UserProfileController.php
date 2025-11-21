@@ -144,4 +144,57 @@ class UserProfileController extends Controller
         ]);
     }
 
+    public function getOrderStatus(Request $request)
+    {
+        $orderId = $request->input('orderId');
+
+        // Fetch order from the database
+        $order = Order::where('order_number', $orderId)->where('user_id', Auth::user()->id )->first();
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'order' => [
+                'orderNumber' => $order->order_number,
+                'status' => $order->status,
+            ],
+        ]);
+    }
+
+
+    public static function profileordercancel(Request $request, $id)
+    {
+        $order = Order::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
+        if ($order) {
+            $order->status = 2; // Assuming 2 means "canceled"
+            $order->save();
+
+            return back()->with('success', 'Order has been canceled');
+        }
+
+        return back()->withErrors('Order not found or you do not have permission to cancel it.');
+    }
+
+    public static function profileorderreturn(Request $request, $id)
+    {
+        $order = Order::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
+        if ($order) {
+            $order->status = 6; // Assuming 2 means "canceled"
+            $order->save();
+
+            return back()->with('success', 'Order has been sent for Return and Refund Request');
+        }
+
+        return back()->withErrors('Order not found or you do not have permission to return it.');
+    }
+
+
 }

@@ -123,7 +123,7 @@
                                 <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                                 <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
-                                <p> Payment Method : @if($order->payment_option == 'cod') Cash On Delivery @endif </p>
+                                <p> Payment Method : {{ $order->payment_option }} </p>
                             </td>
                             <td class="row1-col2" style="border: none;">
                                 <p class=""> SubTotal : <strong>{{ $order->subtotal }} Tk </strong> </p>

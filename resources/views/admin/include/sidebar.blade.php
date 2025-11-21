@@ -6,8 +6,6 @@
             <i class="fas fa-laugh-wink"></i>
         </div>
         <div class="sidebar-brand-text mx-3"><img src="{{ asset($siteSettings->logo) }}" width="115px"></div>
-            <a class="text-center btn btn-sm btn-primary" href="{{ route('home') }}">Visit Site</a>
-
     </a>
 
     <!-- Divider -->
@@ -23,60 +21,62 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
-    </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrder"
            aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Orders</span>
+           <i class="fa-solid fa-boxes-packing"></i>
+            <span>Order Manage</span>
         </a>
         <div id="collapseOrder" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('ordersPending') }}">Pending Orders</a>
-                <a class="collapse-item" href="{{ route('ordersComplete') }}">Completed Orders</a>
+                <a class="collapse-item" href="{{ route('ordersProcessing') }}">Processing Orders</a>
+                <a class="collapse-item" href="{{ route('ordersshiped') }}">Shipped Orders</a>
+                <a class="collapse-item" href="{{ route('ordersComplete') }}">Delivered Orders</a>
                 <a class="collapse-item" href="{{ route('ordersCancel') }}">Cancelled Orders</a>
+                <a class="collapse-item" href="{{ route('ordersreturnrequesst') }}">Return Requested Orders</a>
+                <a class="collapse-item" href="{{ route('ordersreturenen') }}">Returned & Refunded Orders</a>
             </div>
         </div>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('category.index') }}">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Categories</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrder2"
+           aria-expanded="true" aria-controls="collapseTwo">
+           <i class="fa-solid fa-table-list"></i>
+            <span>Categories Manage</span>
         </a>
+        <div id="collapseOrder2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('category.index') }}">Category</a>
+                <a class="collapse-item" href="{{ route('subcategory.index') }}">Sub Categories</a>
+            </div>
+        </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('subcategory.index') }}">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Sub Categories</span>
-        </a>
-    </li>
+
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('brand.index') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Brands</span>
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Brand Manage</span>
         </a>
 
     </li>
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('product.index') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Products</span>
+            <i class="fa-solid fa-box"></i>
+            <span>Product Manage</span>
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVariation"
            aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Variation</span>
+           <i class="fa-solid fa-list-check"></i>
+            <span>Variation Manage</span>
         </a>
         <div id="collapseVariation" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
@@ -87,14 +87,28 @@
     </li>
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('coupons.index') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Coupons</span>
+            <i class="fa-solid fa-ticket"></i>
+            <span>Coupon Manage</span>
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('shipping') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Shipping Methods</span>
+            <i class="fa-solid fa-truck-arrow-right"></i>
+            <span>Shipping Charge Manage</span>
+        </a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('payment_methods.index') }}">
+            <i class="fa-solid fa-money-check"></i>
+            <span>Payment Methods Manage</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('sales_report') }}">
+            <i class="fa-solid fa-money-bill-trend-up"></i>
+            <span>Sales Report</span>
         </a>
     </li>
 
@@ -115,8 +129,8 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
            aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Pages</span>
+           <i class="fa-solid fa-gears"></i>
+            <span>Pages Manage</span>
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
@@ -131,16 +145,17 @@
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('users.index') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Users</span>
+            <i class="fa-solid fa-users"></i>
+            <span>Customers Manage</span>
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('reviews') }}">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Reviews</span>
+            <i class="fa-solid fa-file-pen"></i>
+            <span>Reviews Manage</span>
         </a>
     </li>
 
 
 </ul>
+

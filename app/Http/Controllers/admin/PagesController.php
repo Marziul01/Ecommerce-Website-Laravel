@@ -8,8 +8,11 @@ use App\Models\HomeSetting;
 use App\Models\Offer;
 use App\Models\Page;
 use App\Models\SiteSetting;
+use App\Models\Slider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Expr\FuncCall;
 
 class PagesController extends Controller
 {
@@ -34,6 +37,7 @@ class PagesController extends Controller
             'category2' => HomeSetting::where('id',5)->first(),
             'category3' => HomeSetting::where('id',6)->first(),
             'categories' => Category::where('status', 1)->get(),
+            'sliders' => Slider::all(),
         ]);
     }
 
@@ -89,4 +93,64 @@ class PagesController extends Controller
         Page::updateInfo($request);
         return back();
     }
+
+    public static function sliderdestroy(Request $request ,$id){
+        $Slider = Slider::find($id);
+
+        if ($Slider) {
+            if (!empty($Slider->image)) {
+                // Get the image file path
+                $imagePath = public_path($Slider->image);
+
+                // Check if the image file exists
+                if (file_exists($imagePath)) {
+                    // Delete the image file
+                    unlink($imagePath);
+                }
+
+                // Delete the SubCategory record
+                $Slider->delete();
+            }else{
+                $Slider->delete();
+            }
+
+        }
+
+        return back();
+    }
+
+    public static function sliderupdate( Request $request  ,$id){
+        $Slider = Slider::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'image' => 'nullable',
+            'link' => 'nullable',
+        ]);
+        if ($validator->passes()){
+
+            Slider::saveInfo($request,$id);
+            return back();
+
+        }else{
+            return back()->withErrors($validator);
+        }
+    }
+
+    public static function sliderstore( Request $request){
+        $validator = Validator::make($request->all(),[
+            'image' => 'required',
+            'link' => 'nullable',
+        ]);
+        if ($validator->passes()){
+
+            Slider::saveInfo($request);
+            return back();
+
+        }else{
+            return back()->withErrors($validator);
+        }
+    }
+
+
+
 }

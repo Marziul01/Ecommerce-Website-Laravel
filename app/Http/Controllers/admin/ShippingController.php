@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Country;
+use App\Models\District;
 use App\Models\Order;
 use App\Models\Shipping;
 use App\Models\SiteSetting;
@@ -21,7 +22,7 @@ class ShippingController extends Controller
             'shippings' =>  Shipping::latest()->paginate(10),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
             'countries' => Country::where('status' ,1)->get(),
-
+            'districts' => District::all(),
         ]);
     }
 

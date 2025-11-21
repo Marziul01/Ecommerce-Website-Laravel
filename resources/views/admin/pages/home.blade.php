@@ -581,254 +581,39 @@
         <div class="row">
             <div class="py-3">
                 <h5 class="text-white text-center text-bg-primary p-2" style="border-radius: 5px"> HomePage Sliders </h5>
+                <a href="#" class=" d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#AddCategoryModal">
+                    <i class="bi bi-file-earmark-plus"></i> Add New Slider</a>
             </div>
-            <div class="col-md-12 ">
-                <form action="{{ route('homeSetting-save') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between;" data-toggle="collapse" data-target="#slider1">
-                            <div>
-                                <h6 class="text-black" style="margin-bottom: 0px"> Slider 1</h6>
-                            </div>
-                            <div>
-                                @if($homeSettings->status == 1)
-                                    <i class="bi bi-check-circle-fill" style="color: green"></i> ACTIVE
-                                @else
-                                    <i class="bi bi-x-circle-fill" style="color: red"></i> INACTIVE
-                                @endif
-                            </div>
-
-                        </div>
-                        <div class="card-body row collapse" id="slider1">
-                            <input type="hidden" name="id" value="{{ $homeSettings->id }}">
-                            <div class="col-md-4 mb-2">
-                                <img src="{{ asset($homeSettings->image) }}" width="100%" style="margin-bottom: 10px">
-                                <input type="file" class="form-control" name="image" accept="image/*">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Title</label>
-                                    <input type="text" class="form-control" name="title" value="{{ $homeSettings->title }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>SubTitle</label>
-                                    <input type="text" class="form-control" name="subtitle" value="{{ $homeSettings->subtitle }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details</label>
-                                    <input type="text" class="form-control" name="details" value="{{ $homeSettings->details }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Description </label>
-                                    <input type="text" class="form-control" name="description" value="{{ $homeSettings->description }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="detailsColor" value="{{ $homeSettings->detailsColor }}">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Other Texts Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="color" value="{{ $homeSettings->color }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Text</label>
-                                    <input type="text" class="form-control" name="offerText" value="{{ $homeSettings->offerText }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Link</label>
-                                    <input type="text" class="form-control" name="offerLink" value="{{ $homeSettings->offerLink }}">
-                                </div>
-                                <div class="col-md-12 mb-2" style="padding-top: 20px;">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2">
-                                            @if($homeSettings->status == 1)
-                                                <a class="btn btn-sm btn-warning" href="{{ route('homeSetting-show', $homeSettings->id) }}"><i class="bi bi-x-circle-fill"></i> Inactive</a>
-                                            @else
-                                                <a class="btn btn-sm btn-success" href="{{ route('homeSetting-show', $homeSettings->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-6 mb-2">
-                                            <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-
-                        </div>
-                    </div>
-                </form>
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover table-striped table-responsive-md">
+                    <thead>
+                        <tr>
+                            <td>Image</td>
+                            <td>Slider Link</td>
+                            <td>Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if ( $sliders->isNotEmpty() )
+                        @foreach ($sliders as $slider )
+                        <tr>
+                            <td> <img src=" {{ asset( $slider->image ) }} " width="100px" > </td>
+                            <td> {{ $slider->link }} </td>
+                            <td> 
+                                <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#EditCategoryModal_{{ $slider->id }}"><i class="bi bi-pen-fill"></i> Edit</a>
+                                <form action="{{ route('sliderdestroy', $slider->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this slider?');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @else
+                            <p> No Sliders Added ! </p>
+                        @endif
+                    </tbody>
+                </table>
             </div>
-            <div class="col-md-12 py-3">
-                <form action="{{ route('homeSetting-save') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between;" data-toggle="collapse" data-target="#slider2">
-                            <div>
-                                <h6 class="text-black" style="margin-bottom: 0px"> Slider 2</h6>
-                            </div>
-                            <div>
-                                @if($slider2->status == 1)
-                                    <i class="bi bi-check-circle-fill" style="color: green"></i> ACTIVE
-                                @else
-                                    <i class="bi bi-x-circle-fill" style="color: red"></i> INACTIVE
-                                @endif
-                            </div>
-
-                        </div>
-                        <div class="card-body row collapse" id="slider2">
-                            <input type="hidden" name="id" value="{{ $slider2->id }}">
-                            <div class="col-md-4 mb-2">
-                                <img src="{{ asset($slider2->image) }}" width="100%" style="margin-bottom: 10px">
-                                <input type="file" class="form-control" name="image" accept="image/*">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Title</label>
-                                    <input type="text" class="form-control" name="title" value="{{ $slider2->title }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>SubTitle</label>
-                                    <input type="text" class="form-control" name="subtitle" value="{{ $slider2->subtitle }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details</label>
-                                    <input type="text" class="form-control" name="details" value="{{ $slider2->details }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Description </label>
-                                    <input type="text" class="form-control" name="description" value="{{ $slider2->description }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="detailsColor" value="{{ $slider2->detailsColor }}">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Other Texts Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="color" value="{{ $slider2->color }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Text</label>
-                                    <input type="text" class="form-control" name="offerText" value="{{ $slider2->offerText }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Link</label>
-                                    <input type="text" class="form-control" name="offerLink" value="{{ $slider2->offerLink }}">
-                                </div>
-                                <div class="col-md-12 mb-2" style="padding-top: 20px;">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2">
-                                            @if($slider2->status == 1)
-                                                <a class="btn btn-sm btn-warning" href="{{ route('homeSetting-show', $slider2->id) }}"><i class="bi bi-x-circle-fill"></i> Inactive</a>
-                                            @else
-                                                <a class="btn btn-sm btn-success" href="{{ route('homeSetting-show', $slider2->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-6 mb-2">
-                                            <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-12 ">
-                <form action="{{ route('homeSetting-save') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between;" data-toggle="collapse" data-target="#slider3">
-                            <div>
-                                <h6 class="text-black" style="margin-bottom: 0px"> Slider 3</h6>
-                            </div>
-                            <div>
-                                @if($slider3->status == 1)
-                                    <i class="bi bi-check-circle-fill" style="color: green"></i> ACTIVE
-                                @else
-                                    <i class="bi bi-x-circle-fill" style="color: red"></i> INACTIVE
-                                @endif
-                            </div>
-
-                        </div>
-                        <div class="card-body row collapse" id="slider3">
-                            <input type="hidden" name="id" value="{{ $slider3->id }}">
-                            <div class="col-md-4 mb-2">
-                                <img src="{{ asset($slider3->image) }}" width="100%" style="margin-bottom: 10px">
-                                <input type="file" class="form-control" name="image" accept="image/*">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Title</label>
-                                    <input type="text" class="form-control" name="title" value="{{ $slider3->title }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>SubTitle</label>
-                                    <input type="text" class="form-control" name="subtitle" value="{{ $slider3->subtitle }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details</label>
-                                    <input type="text" class="form-control" name="details" value="{{ $slider3->details }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Description </label>
-                                    <input type="text" class="form-control" name="description" value="{{ $slider3->description }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Details Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="detailsColor" value="{{ $slider3->detailsColor }}">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="col-md-12 mb-2">
-                                    <label>Other Texts Color (Color Code or Name)</label>
-                                    <input type="text" class="form-control" name="color" value="{{ $slider3->color }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Text</label>
-                                    <input type="text" class="form-control" name="offerText" value="{{ $slider3->offerText }}">
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                    <label>Button Link</label>
-                                    <input type="text" class="form-control" name="offerLink" value="{{ $slider3->offerLink }}">
-                                </div>
-                                <div class="col-md-12 mb-2" style="padding-top: 20px;">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2">
-                                            @if($slider3->status == 1)
-                                                <a class="btn btn-sm btn-warning" href="{{ route('homeSetting-show', $slider3->id) }}"><i class="bi bi-x-circle-fill"></i> Inactive</a>
-                                            @else
-                                                <a class="btn btn-sm btn-success" href="{{ route('homeSetting-show', $slider3->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-6 mb-2">
-                                            <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-
         </div>
     </div>
     <div class="container ">
@@ -936,6 +721,68 @@
             </div>
         </div>
     </div>
+
+
+<div class="modal fade" id="AddCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+       <div class="modal-content">
+           <div class="modal-header">
+               Add New Slider
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+           <div class="modal-body">
+               <form action="{{ route('sliderstore') }}" method="POST" enctype="multipart/form-data">
+                   @csrf
+                   <div class="form-group">
+                       <label for="exampleInputEmail1">Slider Link</label>
+                       <input type="text" class="form-control" id="link" name="link">
+                   </div>
+                   
+                   <div class="form-group">
+                       <label for="exampleInputEmail1">Image</label>
+                       <input type="file" class="form-control" name="image">
+                   </div>
+                   <button type="submit" class="btn btn-primary">Create</button>
+               </form>
+           </div>
+       </div>
+   </div>
+</div>
+
+
+{{--    Edit Category Model--}}
+@if(isset($slider))
+   @foreach($sliders as $slider)
+       <div class="modal fade" id="EditCategoryModal_{{ $slider->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+           <!-- Modal content goes here, make sure to customize it for each category -->
+           <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       Edit Slider
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                   </div>
+                   <div class="modal-body">
+                       <form action="{{ route('sliderupdate', $slider->id) }}" method="POST" enctype="multipart/form-data">
+                           @csrf
+                           <div class="form-group">
+                               <label for="exampleInputEmail1">Slider Link</label>
+                               <input type="text" class="form-control" name="link" value="{{ $slider->link }}">
+                           </div>
+                           <div class="form-group">
+                               <label for="exampleInputEmail1">Image</label>
+                               <input type="file" class="form-control" name="image">
+                               <img src="{{ asset($slider->image) }}" width="100px" height="100px">
+                           </div>
+                           <button type="submit" class="btn btn-primary">Update</button>
+                       </form>
+                   </div>
+               </div>
+           </div>
+       </div>
+   @endforeach
+@endif
+
+
 
 @endsection
 

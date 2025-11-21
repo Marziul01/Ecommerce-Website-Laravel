@@ -129,6 +129,12 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
+                                                <label for="price">Making/Purchase Price</label>
+                                                <input type="text" name="purchase_price" id="price" class="form-control" placeholder="Making/Purchase Price" value="{{ $product->purchase_price }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
                                                 <label for="price">Price</label>
                                                 <input type="text" name="price" id="price" class="form-control" placeholder="Price" value="{{ $product->price }}">
                                             </div>

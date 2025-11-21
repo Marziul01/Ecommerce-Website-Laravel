@@ -102,7 +102,7 @@
 {{--                    </div>--}}
 {{--                @endif--}}
             </div>
-            <form method="post" action="{{ route('order') }}">
+            <form method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-6">
@@ -124,7 +124,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <div class="custom_select">
-                                    <select class="form-control" name="country" id="country">
+                                     <select class="form-control" name="country" id="country">
                                         <option value="">Select a Country</option>
                                         @foreach($countries as $country)
                                             <option value="{{ $country->code }}" >{{ $country->name }}</option>
@@ -290,20 +290,68 @@
                                     <h5>Payment</h5>
                                 </div>
                                 <div class="payment_option">
-                                    <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" value="cod" id="payment_option_one" checked>
-                                        <label class="form-check-label" for="payment_option_one" data-bs-toggle="collapse" data-target="#cod" aria-controls="cod">COD</label>
-                                        <div class="form-group collapse in" id="cod">
-                                            <p> Cash On Delivery  </p>
+                                    <div class="payment_option">
+                                        @foreach($payment_methods as $method)
+                                            <div class="custome-radio mt-3">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    type="radio" 
+                                                    name="payment_option" 
+                                                    value="{{ $method->id }}" 
+                                                    id="payment_option_{{ $method->id }}" 
+                                                    data-method-type="{{ $method->type }}"
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#multiCollapseExample{{ $method->id }}" 
+                                                    aria-expanded="false" 
+                                                    aria-controls="multiCollapseExample{{ $method->id }}">
+                                                <label class="form-check-label" for="payment_option_{{ $method->id }}">
+                                                    {{ $method->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    
+                                        <div class="accordion mt-3" id="paymentMethodsAccordion">
+                                            @foreach($payment_methods as $method)
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="collapse" 
+                                                            id="multiCollapseExample{{ $method->id }}" 
+                                                            data-bs-parent="#paymentMethodsAccordion">
+                                                            <div class="card card-body">
+                                                                <div>Note: {{ $method->note }}</div>
+                                                                @if ($method->type == 'Online Banking' || $method->type == 'Bank Account' )
+                                                                <div class="row py-3">
+                                                                    @if ($method->type == 'Online Banking')
+                                                                        <div class="col-6">{{ $method->name }} Number: {{ $method->number }}</div>
+                                                                    @endif
+                                                                    @if ($method->type == 'Bank Account')
+                                                                        <div class="col-6">Account Number: {{ $method->number }}</div>
+                                                                        <div class="col-6">Account Name: {{ $method->account_name }}</div>
+                                                                        <div class="col-6">Bank Name: {{ $method->bank_name }}</div>
+                                                                        <div class="col-6">Branch Name: {{ $method->branch_name }}</div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="row">
+                                                                    @if ($method->type == 'Online Banking')
+                                                                        <input type="text" class="form-control" name="payment_number{{ $method->id }}" placeholder="Transaction ID*">
+                                                                        <label class="mt-2" for="">Payment Receipt Screenshot*</label>
+                                                                        <input type="file" name="payment_prove{{$method->id}}" class="form-control" accept="image/*">
+                                                                    @endif
+                                                                    @if ($method->type == 'Bank Account')
+                                                                        <input type="number" class="form-control" name="payment_number{{ $method->id }}" placeholder="Sender Bank Account Number">
+                                                                        <label class="mt-2" for="">Payment Receipt Screenshot*</label>
+                                                                        <input type="file" name="payment_prove{{$method->id}}" class="form-control" accept="image/*">
+                                                                    @endif
+                                                                </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
-                                    <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" value="stripe" name="payment_option" id="payment_option_two">
-                                        <label class="form-check-label" for="payment_option_two" data-bs-toggle="collapse" data-target="#stripe" aria-controls="stripe">Stripe</label>
-                                        <div class="form-group collapse in" id="stripe">
-                                        <p> Pay With Stripe </p>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-fill-out btn-block mt-30">Place Order</button>
@@ -479,9 +527,82 @@
 
     </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
+        const dynamicFields = document.getElementById('dynamic-fields');
+
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', function () {
+                const selectedType = this.dataset.methodType;
+
+                // Hide all fields first
+                document.querySelectorAll('.fields-group').forEach(group => group.classList.add('d-none'));
+
+                // Show the relevant fields based on selected type
+                if (selectedType) {
+                    document.getElementById(`fields-${selectedType}`).classList.remove('d-none');
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Toastr CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 
+<script>
+$(document).ready(function() {
 
+    $("form").on("submit", function(e){
+        e.preventDefault();
+
+        $("#loaderOverlay").show(); // show loader
+
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: "{{ route('order') }}",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+
+            success: function(res) {
+                $("#loaderOverlay").hide();
+
+                if(res.status === "error"){
+                    toastr.error(res.message);
+                    return;
+                }
+
+                toastr.success(res.message);
+
+                setTimeout(() => {
+                    window.location.href = res.redirect;
+                }, 1000);
+            },
+
+            error: function(xhr) {
+                $("#loaderOverlay").hide();
+
+                if(xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]);
+                    });
+                } 
+                else {
+                    toastr.error("Something went wrong!");
+                }
+            }
+        });
+    });
+
+});
+</script>
 
 
 

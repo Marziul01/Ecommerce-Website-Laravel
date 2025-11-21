@@ -36,6 +36,7 @@ class Product extends Model
 
         self::$product->short_desc = $request->short_desc;
         self::$product->full_desc = $request->full_desc;
+        self::$product->purchase_price = $request->purchase_price;
         self::$product->price = $request->price;
         self::$product->compare_price = $request->compare_price;
         self::$product->category_id = $request->category_id;

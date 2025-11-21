@@ -46,11 +46,7 @@
                                 <td>{{ $order->first_name }}</td>
                                 <td>{{ $order->phone }}</td>
                                 <td>
-                                    @if($order->status == 1)
-                                        <button class="btn btn-sm btn-primary">Processing</button>
-                                    @else
-                                        <button class="btn btn-sm btn-warning">Out for Delivery</button>
-                                    @endif
+                                    <button class="btn btn-sm btn-warning">Pending</button>                                
                                 </td>
                                 <td>
                                     @if($order->payment_status == 1)

@@ -32,22 +32,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\CategoryProductController;
+use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\SaleReports;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrdersExport;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-//Route::get('/', function () {
-//    return view('welcome');
-//});
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}',[ShopController::class,'index'])->name('shop');
@@ -63,7 +53,7 @@ Route::post('/order/submit', [CartController::class,'processCheckout'])->name('o
 Route::post('/calculate/shipping', [CartController::class,'calculateShipping'])->name('calculateShipping');
 Route::post('/apply/coupon', [CartController::class,'applyCoupon'])->name('applyCoupon');
 Route::post('/remove/coupon', [CartController::class,'removeCoupon'])->name('removeCoupon');
-Route::get('/thankYou', [CartController::class ,'thankYou'])->name('thankYou');
+Route::get('/thankYou/{order}', [CartController::class ,'thankYou'])->name('thankYou');
 Route::get('/wishlist', [WishlistController::class ,'index'])->name('wishlist');
 Route::post('/add-to-wishlist',[WishlistController::class,'addToWishlist'])->name('addToWishlist');
 Route::post('/get-Wishlist-Count',[WishlistController::class,'getWishlistCount'])->name('getWishlistCount');
@@ -98,6 +88,10 @@ Route::group(['prefix' => 'account'],function(){
         Route::post('/user/update/address/{id}',[UserProfileController::class,'updateAddress'])->name('updateBillingAddress');
         Route::post('/user/update/shippingAddress/{id}',[UserProfileController::class,'updateShippingAddress'])->name('updateShippingAddress');
         Route::post('/user/update/Info/{id}',[UserProfileController::class,'updateUserInfo'])->name('updateUserInfo');
+        Route::post('/get-order-status', [UserProfileController::class, 'getOrderStatus'])->name('get-order-status');
+        Route::get('/profileordercancel/{id}', [UserProfileController::class, 'profileordercancel'])->name('profileordercancel');
+        Route::get('/profile/order/return/{id}', [UserProfileController::class, 'profileorderreturn'])->name('profileorderreturn');
+
     });
 });
 
@@ -145,8 +139,12 @@ Route::group(['prefix' => 'admin'],function(){
         Route::post('/shipping/methods/update/{id}',[ShippingController::class,'update'])->name('shippingUpdate');
         Route::resources(['coupons' => CouponController::class]);
         Route::get('/orders',[OrderController::class,'index'])->name('ordersPending');
+        Route::get('/orders/procesing',[OrderController::class,'ordersProcessing'])->name('ordersProcessing');
+        Route::get('/orders/shipped',[OrderController::class,'ordersshiped'])->name('ordersshiped');
         Route::get('/orders/complete',[OrderController::class,'ordersComplete'])->name('ordersComplete');
         Route::get('/orders/cancel',[OrderController::class,'ordersCancel'])->name('ordersCancel');
+        Route::get('/orders/return/requested',[OrderController::class,'ordersreturnrequesst'])->name('ordersreturnrequesst');
+        Route::get('/orders/retured/refunded',[OrderController::class,'ordersreturenen'])->name('ordersreturenen');
         Route::get('/view/orders/{id}',[OrderController::class,'viewOrders'])->name('viewOrders');
         Route::post('/order/status/update/{id}',[OrderController::class,'orderStatusUpdate'])->name('order-status-update');
         Route::post('/order/payment/status/update/{id}',[OrderController::class,'orderPaymentStatusUpdate'])->name('order-paymentStatus-update');
@@ -164,6 +162,12 @@ Route::group(['prefix' => 'admin'],function(){
         Route::get('reviews',[RatingController::class,'reviews'])->name('reviews');
         Route::get('reviewShow/{id}',[RatingController::class,'reviewShow'])->name('reviewShow');
         Route::post('reviewDestroy/{id}',[RatingController::class,'reviewDestroy'])->name('reviewDestroy');
+        Route::post('/update/slider/destroy/{id}',[PagesController::class,'sliderdestroy'])->name('sliderdestroy');
+        Route::post('/update/slider/update/{id}',[PagesController::class,'sliderupdate'])->name('sliderupdate');
+        Route::post('/update/slider/store',[PagesController::class,'sliderstore'])->name('sliderstore');
+        Route::resources(['payment_methods' => PaymentMethodController::class]);
+        Route::get('sales/report',[SaleReports::class,'salesReport'])->name('sales_report');
+
 
     });
 

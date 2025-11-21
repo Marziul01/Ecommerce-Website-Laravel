@@ -14,8 +14,13 @@
                     <div class="text-center">
                         <div id="news-flash" class="d-inline-block">
                             <ul>
+                                @if ($siteSettings->offerOne)
                                 <li>{{ $siteSettings->offerOne }} <a href="{{ $siteSettings->offerOneLink }}">View details</a></li>
+                                @endif 
+                                @if ($siteSettings->offerTwo)
                                 <li>{{ $siteSettings->offerTwo }} <a href="{{ $siteSettings->offerTwoLink }}">Shop now</a></li>
+                                @endif 
+                                
                             </ul>
                         </div>
                     </div>
@@ -23,14 +28,14 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
+                            {{-- <li>
                                 <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
                                 <ul class="language-dropdown">
                                     <li><a href="#"><img src="{{ asset('frontend-assets') }}/imgs/theme/flag-fr.png" alt="">Français</a></li>
                                     <li><a href="#"><img src="{{ asset('frontend-assets') }}/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
                                     <li><a href="#"><img src="{{ asset('frontend-assets') }}/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
-                            </li>
+                            </li> --}}
                             @if(Auth::check())
                                 <li class="dropdown">
                                     <i class="fi-rs-user"></i>

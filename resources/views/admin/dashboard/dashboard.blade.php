@@ -29,50 +29,50 @@
                     </div>
                 </div>
                 <div class="mt-4 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold  text-uppercase mb-1">
                                        All Time Total Earnings</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">Tk {{$alltotalearning}}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
                         </a>
                     </div>
                 </div>
                 <div class="mt-4 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">
                                        Total Completed Orders </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$orders->where('status', 4)->count()}}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-clipboard-list"></i>
                                 </div>
                             </div>
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 h-100 row mobile-rows-dash">
+            <div class="col-md-8 h-100 row dash-rows-fix">
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">
                                         Earnings (This Month)</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">Tk {{$monthlyEarnings}}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon ">
+                                    <i class="fa-solid fa-bag-shopping"></i>
                                 </div>
                             </div>
                         </a>
@@ -81,16 +81,16 @@
 
                 <!-- Earnings (Monthly) Card Example -->
                 <div class=" col-md-4 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('product.index') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">
                                         Total Products</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $products }}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                <div class="col-auto  dash-card-icon">
+                                    <i class="fa-solid fa-cube"></i>
                                 </div>
                             </div>
                         </a>
@@ -98,11 +98,11 @@
                 </div>
 
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('product.index') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Inactive Products
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Inactive Products
                                     </div>
                                     <div class="row no-gutters align-items-center">
                                         <div class="col-auto">
@@ -110,8 +110,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                <div class="col-auto  dash-card-icon">
+                                    <i class="fa-solid fa-shop-lock"></i>
                                 </div>
                             </div>
                         </a>
@@ -119,16 +119,16 @@
                 </div>
 
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('ordersPending') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">
                                         Pending Orders</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $orders->where('status' ,1 )->count() }}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-hourglass-half"></i>
                                 </div>
                             </div>
                         </a>
@@ -137,16 +137,16 @@
                 
 
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold  text-uppercase mb-1">
                                         Orders out for delivery </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$orders->where('status', 3)->count()}}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-truck-ramp-box"></i>
                                 </div>
                             </div>
                         </a>
@@ -155,16 +155,16 @@
 
                 <!-- Earnings (Monthly) Card Example -->
                 <div class=" col-md-4 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('ordersCancel') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    <div class="text-xs font-weight-bold  text-uppercase mb-1">
                                         Canceled Orders</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $orders->where('status', 2)->count() }}</div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-ban"></i>
                                 </div>
                             </div>
                         </a>
@@ -172,11 +172,11 @@
                 </div>
 
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('ordersPending') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Payment Pending Orders 
+                                    <div class="text-xs font-weight-bold  text-uppercase mb-1">Payment Pending Orders 
                                     </div>
                                     <div class="row no-gutters align-items-center">
                                         <div class="col-auto">
@@ -184,8 +184,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-money-check-dollar"></i>
                                 </div>
                             </div>
                         </a>
@@ -193,11 +193,11 @@
                 </div>
 
                 <div class="col-md-4 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card shadow h-100 py-2">
                         <a class="card-body dashboard-a" href="{{ route('users.index') }}">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Users
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Users
                                     </div>
                                     <div class="row no-gutters align-items-center">
                                         <div class="col-auto">
@@ -205,8 +205,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                <div class="col-auto dash-card-icon">
+                                    <i class="fa-solid fa-user"></i>
                                 </div>
                             </div>
                         </a>

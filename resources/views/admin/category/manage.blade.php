@@ -102,7 +102,7 @@
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header"> 
                     Add New Category
                 </div>
                 <div class="modal-body">

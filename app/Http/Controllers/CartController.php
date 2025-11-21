@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Country;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Shipping;
 use App\Models\SiteSetting;
@@ -203,6 +204,7 @@ class CartController extends Controller
             'shipping_methods' => Shipping::all(),
             'states' => $states,
             'discount' => $discount,
+            'payment_methods' => PaymentMethod::where('status', 1)->get(),
         ]);
     }
 
@@ -221,8 +223,8 @@ class CartController extends Controller
         ];
 
         if (!empty($request->create_account) && $request->create_account == 'Yes'){
-            $rules['password'] = 'required | min:8';
-            $rules['email'] = 'required |unique:users';
+            $rules['password'] = 'required|min:8';
+            $rules['email'] = 'required|unique:users';
         }else{
             $rules['email'] = 'required';
         }
@@ -235,8 +237,27 @@ class CartController extends Controller
             $rules['shipping_address'] = 'required';
             $rules['shipping_state'] = 'required';
         }
+        
 
         $validator = Validator::make($request->all(),$rules);
+        $paymentType = PaymentMethod::find($request->payment_option);
+
+        if (!$paymentType) {
+            // return response()->json([
+            //     'message' => 'Invalid payment option selected.'
+            // ], 422);
+            return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid payment option selected'
+                    ], 200);
+        }
+
+        if ($paymentType->type == 'Online Banking' || $paymentType->type == 'Bank Account') {
+            $validator->addRules([
+                "payment_number{$paymentType->id}" => 'required',
+                "payment_prove{$paymentType->id}" => 'required',
+            ]);
+        }
 
         if ($validator->passes()){
             if (!Auth::check() && session()->has('code') ){
@@ -248,9 +269,28 @@ class CartController extends Controller
                     $orderId = Order::saveInfo($request);
                     $order = Order::find($orderId);
 
+
+                    if ($paymentType->type == 'Online Banking' || $paymentType->type == 'Bank Account') {
+                        $image = $request->file("payment_prove{$paymentType->id}");
+                        $imageNewName = $order->order_number . '.' . $image->extension();
+                        $dir = public_path('frontend-assets/imgs/payments/');
+                        
+                        // Ensure the directory exists
+                        if (!file_exists($dir)) {
+                            mkdir($dir, 0777, true);
+                        }
+            
+                        $imagePath = 'frontend-assets/imgs/payments/' . $imageNewName;
+                        $image->move($dir, $imageNewName);
+            
+                        // Save the image path to the database
+                        $order->payment_prove = $imagePath;
+                        $order->save();
+                    }
+
                     // Generate PDF
                     $pdf = PDF::loadView('email.invoice', $order); // Assuming you're using DomPDF or similar library
-                    $pdfView = $pdf->stream(); // Removed the filename parameter because it's unnecessary
+                    $pdfView = $pdf->output(); // Removed the filename parameter because it's unnecessary
 
                     // Save PDF to public directory
                     $pdfFileName = $order->order_number . '.pdf'; // Generate a unique filename
@@ -273,20 +313,46 @@ class CartController extends Controller
 
                     Notification::send($admin, new NewOrderNotification($order));
 
-                    return view('frontend.checkout.thankYou',[
-                        'siteSettings' => SiteSetting::where('id', 1)->first(),
-                        'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
-                        'cartContent' => Cart::content(),
-                        'order' => $order,
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Order placed successfully!',
+                        'redirect' => route('thankYou' , $order->order_number),
                     ]);
 
                 }else{
-                    return back()->withErrors("Your coupons maximum uses exceeded");
+                    // return response()->json([
+                    //     'status' => 'error',
+                    //     'message' => "Your coupon's maximum uses exceeded"
+                    // ]);
+
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "Your coupon's maximum uses exceeded",
+                    ], 200);
                 }
             }
             else{
                 $orderId = Order::saveInfo($request);
                 $order = Order::find($orderId);
+
+                if ($paymentType->type == 'Online Banking' || $paymentType->type == 'Bank Account') {
+               
+                    $image = $request->file("payment_prove{$paymentType->id}");
+                    $imageNewName = $order->order_number . '.' . $image->extension();
+                    $dir = public_path('frontend-assets/imgs/payments/');
+                    
+                    // Ensure the directory exists
+                    if (!file_exists($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+        
+                    $imagePath = 'frontend-assets/imgs/payments/' . $imageNewName;
+                    $image->move($dir, $imageNewName);
+        
+                    // Save the image path to the database
+                    $order->payment_prove = $imagePath;
+                    $order->save();
+                }
 
                 $pdfData = [
                     'order' => $order,
@@ -316,16 +382,19 @@ class CartController extends Controller
 
                 Notification::send($admin, new NewOrderNotification($order));
 
-                return view('frontend.checkout.thankYou',[
-                    'siteSettings' => SiteSetting::where('id', 1)->first(),
-                    'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
-                    'cartContent' => Cart::content(),
-                    'order' => $order,
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Order placed successfully!',
+                    'redirect' => route('thankYou' , $order->order_number),
                 ]);
             }
 
         }else{
-            return back()->withErrors($validator);
+            return response()->json([
+                'status' => 'validation_error',
+                'errors' => $validator->errors()
+            ], 422);
+
         }
     }
 
@@ -458,8 +527,14 @@ class CartController extends Controller
         return self::calculateShipping($request);
     }
 
-    public static function thankYou(){
-
+    public static function thankYou($order){
+        $order = Order::where('order_number', $order)->first();
+        return view('frontend.checkout.thankYou',[
+            'siteSettings' => SiteSetting::where('id', 1)->first(),
+            'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
+            'cartContent' => Cart::content(),
+            'order' => $order,
+        ]);
     }
 
 }

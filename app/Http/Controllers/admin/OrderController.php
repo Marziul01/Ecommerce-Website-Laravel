@@ -15,7 +15,23 @@ class OrderController extends Controller
         return view('admin.order.pending',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
-            'orders' => Order::whereIn('status', [1, 3])->orderBy('created_at', 'desc')->paginate(10),
+            'orders' => Order::where('status', 1)->orderBy('created_at', 'desc')->paginate(10),
+        ]);
+    }
+
+    public static function ordersProcessing(){
+        return view('admin.order.processing',[
+            'admin' => Auth::guard('admin')->user(),
+            'siteSettings' => SiteSetting::where('id', 1)->first(),
+            'orders' => Order::where('status', 3)->orderBy('created_at', 'desc')->paginate(10),
+        ]);
+    }
+
+    public static function ordersshiped(){
+        return view('admin.order.shipped',[
+            'admin' => Auth::guard('admin')->user(),
+            'siteSettings' => SiteSetting::where('id', 1)->first(),
+            'orders' => Order::where('status',4)->orderBy('created_at', 'desc')->paginate(10),
         ]);
     }
 
@@ -23,7 +39,7 @@ class OrderController extends Controller
         return view('admin.order.completed',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
-            'orders' => Order::where('status', 4)->orderBy('created_at', 'desc')->paginate(10),
+            'orders' => Order::whereIn('status', [ 5,8 ])->orderBy('created_at', 'desc')->paginate(10),
         ]);
     }
 
@@ -32,6 +48,22 @@ class OrderController extends Controller
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
             'orders' => Order::where('status', 2)->orderBy('created_at', 'desc')->paginate(10),
+        ]);
+    }
+
+    public static function ordersreturnrequesst(){
+        return view('admin.order.returnRequest',[
+            'admin' => Auth::guard('admin')->user(),
+            'siteSettings' => SiteSetting::where('id', 1)->first(),
+            'orders' => Order::where('status', 6)->orderBy('created_at', 'desc')->paginate(10),
+        ]);
+    }
+
+    public static function ordersreturenen(){
+        return view('admin.order.returned_refunded',[
+            'admin' => Auth::guard('admin')->user(),
+            'siteSettings' => SiteSetting::where('id', 1)->first(),
+            'orders' => Order::where('status', 7)->orderBy('created_at', 'desc')->paginate(10),
         ]);
     }
 

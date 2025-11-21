@@ -32,16 +32,28 @@
                             <h6>Order Status:</h6>
                             <h4 class="mt-2">
                                 @if($order->status == 1)
-                                    Processing
-                                @elseif($order->status == 2)
-                                    Cancelled
-                                    <br>
-                                    <span class="text-danger">(" {{ $order->reason }} ")</span>
-                                @elseif($order->status == 3)
-                                    Out for Delivery
-                                @elseif($order->status == 4)
-                                    Delivered
-                                @endif
+                                        Pending
+                                    @elseif($order->status == 2)
+                                        Cancelled
+                                        <br>
+                                        <span class="text-danger font-sm">(" {{ $order->reason }} ")</span>
+                                    @elseif($order->status == 3)
+                                        Processing
+                                    @elseif($order->status == 4)
+                                        Shipped
+                                    @elseif($order->status == 5)
+                                        Delivered
+                                    @elseif($order->status == 6)
+                                        Order Return & Refund Requested
+                                        <br>
+                                        <p>" Our Team will contact with you regarding the returning order process. "</p>
+                                    @elseif($order->status == 7)
+                                        Order Returened and Refunded
+                                    @elseif($order->status == 8)
+                                        Delivered
+                                        <br>
+                                        <p>" Sorry You Can't return this order. "</p>
+                                    @endif
                             </h4>
                         </div>
                         <div>
@@ -60,6 +72,18 @@
                             <h6>Order Amount:</h6>
                             <h4 class="mt-2">{{ $order->grand_total }} Tk</h4>
                         </div>
+                        @if ($order->status == 1 )
+                        <div>
+                            <a href=" {{ route('profileordercancel', $order->id ) }} " onclick="return confirmAction()" class="btn btn-danger"> Cancel Order </a>
+                        </div>
+                        @endif
+                        @if ($order->status == 5 && \Carbon\Carbon::now()->diffInDays($order->updated_at) <= 7)
+                            <div>
+                                <a href="{{ route('profileorderreturn', $order->id) }}" 
+                                onclick="return confirmAction2()" 
+                                class="btn btn-danger">Return & Refund Order</a>
+                            </div>
+                        @endif
                     </div>
                     <div class="card-body">
                         <table class="table table-responsive-md no-border mobile-table">
@@ -101,7 +125,9 @@
                             <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                             <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
-                            <p> Payment Method : @if($order->payment_option == 'cod') Cash On Delivery @endif </p>
+                            <p> Payment Method : {{ $order->payment_option }} </p>
+                            <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                            <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
                         </div>
                         <div class="col-md-2 d-flex flex-column align-items-center mobile-price-width">
                             <p class="text-center"> SubTotal : <strong>{{ $order->subtotal }} Tk </strong></p>
@@ -119,6 +145,16 @@
 
 @section('customJs')
 
+<script>
+    function confirmAction() {
+        return confirm("Are you sure you want to cancel this order?");
+    }
+</script>
 
+<script>
+    function confirmAction2() {
+        return confirm("Are you sure you want to return and refund this order?");
+    }
+</script>
 
 @endsection

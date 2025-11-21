@@ -13,11 +13,13 @@ class Order extends Model
 {
     use HasFactory;
 
-    private static  $user , $order , $auth;
+    private static  $user , $order , $auth, $image,$imageUrl, $imageNewName,$dir;
 
     public static function saveInfo($request){
 
         $user = null;
+        $filePath = null;
+        $paymentType = PaymentMethod::where('id', $request->payment_option )->first();
 
         if (Session::has('code')){
             $coupon_code = Session::get('code')->code;
@@ -60,43 +62,38 @@ class Order extends Model
             }
         }
 
-        if ($request->payment_option == 'cod'){
-                $subtotall = Cart::subtotal(2,'.','');
-                $shipping = $request->shipping_charge;
-                if (isset($request->discount_charge)){
-                    $discount = $request->discount_charge;
-                }else{
-                    $discount = 0;
-                }
-
-                $grandTotall = ($subtotall-$discount)+$shipping;
-
-                self::$order = new Order();
-                self::$order->user_id = $user;
-                self::$order->subtotal = $subtotall;
-                self::$order->shipping = $shipping;
-                self::$order->discount = $discount;
-                self::$order->grand_total = $grandTotall;
-                self::$order->coupon_code = $coupon_code;
-                self::$order->first_name = ($request->shipping == 'Yes') ? $request->shipping_first_name : $request->first_name;
-                self::$order->last_name = ($request->shipping == 'Yes') ? $request->shipping_last_name : $request->last_name;
-                self::$order->email = $request->email;
-                self::$order->phone = ($request->shipping == 'Yes') ? $request->shipping_phone : $request->phone;
-                self::$order->country_id = $countryId;
-                self::$order->address = ($request->shipping == 'Yes') ? $request->shipping_address : $request->billing_address;
-                self::$order->city = ($request->shipping == 'Yes') ? $request->shipping_city : $request->city;
-                self::$order->state = ($request->shipping == 'Yes') ? $request->shipping_state : $request->state;
-                self::$order->zip = ($request->shipping == 'Yes') ? $request->shipping_zipcode : $request->zipcode;
-                self::$order->notes = $request->notes;
-                self::$order->order_number = $orderNumber;
-                self::$order->payment_option = $request->payment_option;
-                self::$order->save();
-
-
-
+        $subtotall = Cart::subtotal(2,'.','');
+        $shipping = $request->shipping_charge;
+        if (isset($request->discount_charge)){
+            $discount = $request->discount_charge;
         }else{
-            //
+            $discount = 0;
         }
+
+        $grandTotall = ($subtotall-$discount)+$shipping;
+
+        self::$order = new Order();
+        self::$order->user_id = $user;
+        self::$order->subtotal = $subtotall;
+        self::$order->shipping = $shipping;
+        self::$order->discount = $discount;
+        self::$order->grand_total = $grandTotall;
+        self::$order->coupon_code = $coupon_code;
+        self::$order->first_name = ($request->shipping == 'Yes') ? $request->shipping_first_name : $request->first_name;
+        self::$order->last_name = ($request->shipping == 'Yes') ? $request->shipping_last_name : $request->last_name;
+        self::$order->email = $request->email;
+        self::$order->phone = ($request->shipping == 'Yes') ? $request->shipping_phone : $request->phone;
+        self::$order->country_id = $countryId;
+        self::$order->address = ($request->shipping == 'Yes') ? $request->shipping_address : $request->billing_address;
+        self::$order->city = ($request->shipping == 'Yes') ? $request->shipping_city : $request->city;
+        self::$order->state = ($request->shipping == 'Yes') ? $request->shipping_state : $request->state;
+        self::$order->zip = ($request->shipping == 'Yes') ? $request->shipping_zipcode : $request->zipcode;
+        self::$order->notes = $request->notes;
+        self::$order->order_number = $orderNumber;
+        self::$order->payment_option = $request->payment_option;
+        self::$order->payment_number = $request->input("payment_number{$paymentType->id}");
+
+        self::$order->save();
 
         $orderId = self::$order->id;
 
@@ -120,6 +117,35 @@ class Order extends Model
         return $orderId;
     }
 
+
+    public function saveImage( $request, $orderNumber, $methodId)
+{
+    // Retrieve the uploaded file
+    $file = $request->file("payment_prove{$methodId}");
+
+    if ($file) {
+        // Define the directory
+        $dir = "frontend-assets/imgs/payments/";
+
+        // Ensure the directory exists
+        if (!file_exists(public_path($dir))) {
+            mkdir(public_path($dir), 0777, true);
+        }
+
+        // Create a unique file name
+        $fileName = $orderNumber . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+        // Move the file to the directory
+        $file->move(public_path($dir), $fileName);
+
+        // Return the relative file path
+        return $dir . $fileName;
+    }
+
+    return null;
+}
+
+
     public function orderItems(){
         return $this->hasMany(OrderItem::class);
     }
@@ -130,6 +156,14 @@ class Order extends Model
 
     public function product(){
         return $this->belongsTo(Country::class);
+    }
+
+    public function calculateTotalPurchaseCost()
+    {
+        return $this->orderItems->sum(function ($item) {
+            $purchasePrice = $item->product->purchase_price ?? 0; // Handle NULL purchase_price
+            return $purchasePrice * $item->quantity;
+        });
     }
 
 }
