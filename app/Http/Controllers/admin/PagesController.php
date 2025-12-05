@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\HomeSetting;
 use App\Models\Offer;
@@ -17,6 +18,9 @@ use PhpParser\Node\Expr\FuncCall;
 class PagesController extends Controller
 {
     public static function home(){
+        if(Auth::guard('admin')->user()->access->pages_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.pages.home',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -42,14 +46,36 @@ class PagesController extends Controller
     }
 
     public static function homeSettingUpdate(Request $request){
-        HomeSetting::updateInfo($request);
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $page = HomeSetting::updateInfo($request);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='Home Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $page->id;
+                $notification->save();
         return back();
     }
     public static function homeSettingShow($id){
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         HomeSetting::statusCheck($id);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='Home Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $id;
+                $notification->save();
         return back();
     }
+
     public static function aboutPage(){
+        if(Auth::guard('admin')->user()->access->pages_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.pages.about',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -57,6 +83,9 @@ class PagesController extends Controller
         ]);
     }
     public static function contactPage(){
+        if(Auth::guard('admin')->user()->access->pages_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.pages.contact',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -64,6 +93,9 @@ class PagesController extends Controller
         ]);
     }
     public static function privacy_policy(){
+        if(Auth::guard('admin')->user()->access->pages_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.pages.privacy',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -71,30 +103,73 @@ class PagesController extends Controller
         ]);
     }
     public static function terms_and_condition(){
+        if(Auth::guard('admin')->user()->access->pages_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.pages.terms',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
             'terms' => Page::find(4),
         ]);
     }
+
     public static function updateAboutPage(Request $request){
-        Page::updateInfo($request);
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $page = Page::updateInfo($request);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='About Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $page->id;
+                $notification->save();
         return back();
     }
     public static function updateContactPage(Request $request){
-        Page::updateInfo($request);
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $page = Page::updateInfo($request);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='Contact Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $page->id;
+                $notification->save();
         return back();
     }
     public static function updatePrivacyPage(Request $request){
-        Page::updateInfo($request);
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $page = Page::updateInfo($request);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='Privacy Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $page->id;
+                $notification->save();
         return back();
     }
     public static function updateTermsPage(Request $request){
-        Page::updateInfo($request);
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $page = Page::updateInfo($request);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='Terms Page has been updated.';
+                $notification->notification_for = 'Page Details';
+                $notification->item_id = $page->id;
+                $notification->save();
         return back();
     }
 
     public static function sliderdestroy(Request $request ,$id){
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $Slider = Slider::find($id);
 
         if ($Slider) {
@@ -116,10 +191,20 @@ class PagesController extends Controller
 
         }
 
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='A Slider has been deleted.';
+                $notification->notification_for = 'Slider';
+                $notification->item_id = $Slider->id;
+                $notification->save();
+
         return back();
     }
 
     public static function sliderupdate( Request $request  ,$id){
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $Slider = Slider::find($id);
 
         $validator = Validator::make($request->all(), [
@@ -129,6 +214,12 @@ class PagesController extends Controller
         if ($validator->passes()){
 
             Slider::saveInfo($request,$id);
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='A Slider has been updated.';
+                $notification->notification_for = 'Slider';
+                $notification->item_id = $Slider->id;
+                $notification->save();
             return back();
 
         }else{
@@ -137,13 +228,22 @@ class PagesController extends Controller
     }
 
     public static function sliderstore( Request $request){
+        if(Auth::guard('admin')->user()->access->pages_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'image' => 'required',
             'link' => 'nullable',
         ]);
         if ($validator->passes()){
 
-            Slider::saveInfo($request);
+            $Slider = Slider::saveInfo($request);
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message ='A Slider has been created.';
+                $notification->notification_for = 'Slider';
+                $notification->item_id = $Slider->id;
+                $notification->save();
             return back();
 
         }else{

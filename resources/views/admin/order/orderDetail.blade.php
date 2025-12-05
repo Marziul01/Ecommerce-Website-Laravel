@@ -98,9 +98,8 @@
                                         <a href="{{ route('products', $item->product->slug) }}"><img src="{{ asset($item->product->featured_image) }}" width="100px"></a>
                                         <div>
                                             <a href="{{ route('products', $item->product->slug) }}"><h4> {{ $item->product_name }} </h4></a>
-                                            <p class="text-center">
-                                                @if(isset($item->color)) Color : {{ $item->color }} x @endif
-                                                @if(isset($item->size)) x Size : {{ $item->size }} @endif
+                                            <p class="">
+                                                 @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
                                             </p>
                                         </div>
                                     </div>
@@ -144,6 +143,7 @@
                     <a class="btn btn-primary" href="{{ asset($order->invoice) }}" target="_blank"> View Invoice </a>
                 </div>
                 @endif
+                @if (Auth::guard('admin')->user()->access->order_manage == 3)
                 <div class="card p-2 pt-3 pb-3">
                     <h6 class="text-center"> Order Status </h6>
                     <form method="post" action="{{ route('order-status-update', $order->id) }}" >
@@ -179,6 +179,7 @@
                         <button type="submit" class="btn btn-sm btn-success mt-2">Update Status</button>
                     </form>
                 </div>
+                @endif
                 @endif
             </div>
         </section>

@@ -35,6 +35,8 @@ class Coupon extends Model
 
         $successMessage = "Coupon has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$coupon;
     }
 
 

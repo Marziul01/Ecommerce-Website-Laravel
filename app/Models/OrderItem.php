@@ -9,29 +9,24 @@ class OrderItem extends Model
 {
     use HasFactory;
 
-    public static function details($request,$orderId,$item){
-
-        $shipping = $request->shipping_charge;
-        $totall = $item->price*$item->qty;
-
-        $orderItem = new OrderItem();
-        $orderItem->order_id = $orderId;
-        $orderItem->product_id = $item->id;
-        $orderItem->product_name = $item->name;
-        $orderItem->color = $item->options['color'];
-        $orderItem->size = $item->options['size'];
-        $orderItem->qty = $item->qty;
-        $orderItem->price = $item->price;
-        $orderItem->total = $totall;
-        $orderItem->shipping = $shipping;
-        $orderItem->subtotal = $totall+$shipping;
-        $orderItem->save();
-
-
-    }
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'product_name',
+        'product_variations_id',
+        'qty',
+        'price',
+        'total',
+        'shipping',
+        'subtotal',
+    ];
 
     public function product(){
         return $this->belongsTo(Product::class);
+    }
+
+    public function productVariation(){
+        return $this->belongsTo(ProductVariation::class , 'product_variations_id');
     }
 
 }

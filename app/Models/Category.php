@@ -44,6 +44,7 @@ class Category extends Model
 
         $successMessage = "Category has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+        return self::$category; // <-- IMPORTANT
     }
 
     public static function makeSlug($request){

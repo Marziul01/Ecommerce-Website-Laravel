@@ -54,6 +54,8 @@ class SubCategory extends Model
 
         $successMessage = "Subcategory has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$subcategory;
     }
 
     public static function makeSlug($request){

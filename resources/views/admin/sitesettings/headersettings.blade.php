@@ -46,9 +46,11 @@
                                     <label>Site Tagline</label>
                                     <input type="text" name="tagline" class="form-control" value="{{ $siteSettings->tagline }}">
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->settings == 3)
                                 <div class="col-md-6">
                                     <button type="submit" class="btn btn-primary">Save settings</button>
                                 </div>
+                                @endif
                             </div>
                         </div>
 
@@ -95,9 +97,11 @@
                                     <label>Hotline Number</label>
                                     <input type="text" name="hotline" class="form-control" value="{{ $siteSettings->hotline }}">
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->settings == 3)
                                 <div class="col-md-12 " style="padding-bottom: 0px !important;">
                                     <button type="submit" class="btn btn-primary">Save settings</button>
                                 </div>
+                                @endif
                             </div>
                         </div>
 

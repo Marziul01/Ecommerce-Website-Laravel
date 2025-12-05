@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminNotification;
 use App\Models\PaymentMethod;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
@@ -15,6 +16,9 @@ class PaymentMethodController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->payment_methods == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.payemnt.payment',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -33,6 +37,9 @@ class PaymentMethodController extends Controller
     
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->payment_methods != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'type' => 'required',
             'name' => 'required| unique:payment_methods',
@@ -48,7 +55,13 @@ class PaymentMethodController extends Controller
         ]);
         if ($validator->passes()){
 
-            PaymentMethod::saveInfo($request);
+            $payment_methods = PaymentMethod::saveInfo($request);
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = $payment_methods->name .' Payment method has been created .';
+                $notification->notification_for = 'Payment Method';
+                $notification->item_id = $payment_methods->id;
+                $notification->save();
             return redirect(route('payment_methods.index'));
 
         }else{
@@ -76,6 +89,9 @@ class PaymentMethodController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(Auth::guard('admin')->user()->access->payment_methods != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $payment_methods = PaymentMethod::find($id);
         $validator = Validator::make($request->all(), [
             'type' => 'required',
@@ -93,6 +109,12 @@ class PaymentMethodController extends Controller
         if ($validator->passes()){
 
             PaymentMethod::saveInfo($request,$id);
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = $payment_methods->name .' Payment method has been updated .';
+                $notification->notification_for = 'Payment Method';
+                $notification->item_id = $payment_methods->id;
+                $notification->save();
             return redirect(route('payment_methods.index'));
 
         }else{
@@ -105,7 +127,16 @@ class PaymentMethodController extends Controller
      */
     public function destroy(string $id)
     {
+        if(Auth::guard('admin')->user()->access->payment_methods != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         PaymentMethod::find($id)->delete($id);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = 'A Payment method has been deleted .';
+                $notification->notification_for = 'Payment Method';
+                $notification->item_id = $id;
+                $notification->save();
         return redirect(route('payment_methods.index'));
     }
 }

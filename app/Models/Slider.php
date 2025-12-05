@@ -36,6 +36,8 @@ class Slider extends Model
 
         $successMessage = "Slider has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$category;
     }
 
     public static function saveImage($request){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\SiteSetting;
@@ -17,6 +18,9 @@ class BrandController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->brand == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.brand.manage',[
             'admin' => Auth::guard('admin')->user(),
             'brands' =>  Brand::latest()->paginate(10),
@@ -37,13 +41,24 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->brand != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'slug' => 'required | unique:brands',
         ]);
         if ($validator->passes()){
 
-            Brand::saveInfo($request);
+            $brand = Brand::saveInfo($request);
+
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A new Brand has been created .';
+            $notification->notification_for = 'Brand';
+            $notification->item_id = $brand->id;
+            $notification->save();
+
             return redirect(route('brand.index'));
 
         }else{
@@ -73,6 +88,9 @@ class BrandController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(Auth::guard('admin')->user()->access->brand != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $brand = Brand::find($id);
 
         $validator = Validator::make($request->all(), [
@@ -82,6 +100,12 @@ class BrandController extends Controller
         if ($validator->passes()){
 
             Brand::saveInfo($request,$id);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A Brand has been updated .';
+            $notification->notification_for = 'Brand';
+            $notification->item_id = $brand->id;
+            $notification->save();
             return redirect(route('brand.index'));
 
         }else{
@@ -94,6 +118,9 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
+        if(Auth::guard('admin')->user()->access->brand != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $brand = Brand::find($id);
 
         if ($brand) {
@@ -114,6 +141,13 @@ class BrandController extends Controller
             }
 
         }
+
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A Brand has been deleted .';
+            $notification->notification_for = 'Brand';
+            $notification->item_id = $brand->id;
+            $notification->save();
 
         return redirect(route('brand.index'));
     }

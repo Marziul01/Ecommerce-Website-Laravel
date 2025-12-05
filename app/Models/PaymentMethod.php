@@ -31,6 +31,8 @@ class PaymentMethod extends Model
 
         $successMessage = "Payment Method has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$coupon;
     }
 
 

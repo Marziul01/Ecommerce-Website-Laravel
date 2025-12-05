@@ -20,8 +20,10 @@
     <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Users</h1>
+            @if (Auth::guard('admin')->user()->access->user_manage == 3)
             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#AddUserModal">
                 <i class="bi bi-file-earmark-plus"></i> Add New</a>
+                @endif
         </div>
 
         <div class="card">
@@ -43,6 +45,7 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td class="table-action-td">
+                                    @if (Auth::guard('admin')->user()->access->user_manage == 3)
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#EditUserModal_{{ $user->id }}"><i class="bi bi-pen-fill"></i> Edit</a>
 
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this User?');">
@@ -50,7 +53,7 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
                                     </form>
-
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

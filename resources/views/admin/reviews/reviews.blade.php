@@ -53,6 +53,7 @@
                                     @endif
                                 </td>
                                 <td class="table-action-td">
+                                    @if (Auth::guard('admin')->user()->access->review_manage == 3)
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ViewReviewModal{{ $review->id }}"><i class="bi bi-eye"></i> View</a>
                                 @if($review->status == 1)
                                         <a class="btn btn-sm btn-warning" href="{{ route('reviewShow', $review->id) }}"><i class="bi bi-x-circle-fill"></i> Reject</a>
@@ -64,7 +65,7 @@
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
                                     </form>
-
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

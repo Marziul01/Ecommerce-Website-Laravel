@@ -10,12 +10,10 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-2">
-                    
-                        <h1>Add New Product</h1>
-                    
-                   
-                        <a href="{{ route('product.index') }}" class="btn btn-primary">Back</a>
-                    
+
+                    <h1>Add New Product</h1>
+                    <a href="{{ route('product.index') }}" class="btn btn-primary">Back</a>
+
                 </div>
             </div>
             <!-- /.container-fluid -->
@@ -32,8 +30,8 @@
                 </div>
             @endif
             <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <!-- Default box -->
+                @csrf
+                <!-- Default box -->
                 <div class="container " style="max-width: 100%">
                     <div class="row">
                         <div class="col-md-8">
@@ -44,11 +42,13 @@
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="title">Product Name</label>
-                                                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                                                <input type="text" name="name" id="name" class="form-control"
+                                                    placeholder="Name">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-3 d-none">
                                                 <label for="title">Slug</label>
-                                                <input type="text" name="slug" id="slug" class="form-control" placeholder="slug">
+                                                <input type="text" name="slug" id="slug" class="form-control"
+                                                    placeholder="slug">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -71,7 +71,8 @@
                                     <h2 class="h4 mb-3">Product Featured Image</h2>
                                     <div id="featured-image" class="">
                                         <div class="dz-message needsclick">
-                                            <input type="file" name="featured_image" id="featured-image-upload" accept="image/*">
+                                            <input type="file" name="featured_image" id="featured-image-upload"
+                                                accept="image/*">
                                         </div>
                                         <div id="featured-image-preview" class="image-preview"></div>
                                     </div>
@@ -85,33 +86,33 @@
                                             <br>Drop files here or click to upload.<br><br>
                                         </div>
                                     </div>
-                                    <div class="row" id="image-wrapper">
+                                    <div class="row mt-2" id="image-wrapper">
+                                    </div>
                                 </div>
                             </div>
-
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Pricing</h2>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="price">Making/Purchase Price</label>
-                                                <input type="text" name="purchase_price" id="price" class="form-control" placeholder="Making/Purchase Price">
+                                                <label for="buy_price">Making/Purchase Price</label>
+                                                <input type="text" name="purchase_price" id="buy_price"
+                                                    class="form-control" placeholder="Making/Purchase Price">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="price">Price</label>
-                                                <input type="text" name="price" id="price" class="form-control" placeholder="Price">
+                                                <input type="text" name="price" id="price" class="form-control"
+                                                    placeholder="Price">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="compare_price">Compare at Price</label>
-                                                <input type="text" name="compare_price" id="compare_price" class="form-control" placeholder="Compare Price">
-                                                <p class="text-muted mt-3">
-                                                    To show a reduced price, move the product’s original price into Compare at price. Enter a lower value into Price.
-                                                </p>
+                                                <label for="sale_price">Sale Price</label>
+                                                <input type="text" name="compare_price" id="sale_price"
+                                                    class="form-control" placeholder="Sale Price">
                                             </div>
                                         </div>
                                     </div>
@@ -121,52 +122,42 @@
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Inventory</h2>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 d-none">
                                             <div class="mb-3">
                                                 <label for="sku">SKU (Stock Keeping Unit)</label>
-                                                <input type="text" name="sku" id="sku" class="form-control" placeholder="sku">
+                                                <input type="text" name="sku" id="sku" class="form-control"
+                                                    placeholder="sku">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+
+                                        <div class="col-md-12">
+                                            <input type="hidden" name="track_qty" value="YES">
+                                            <label for="sku">Product Quantity</label>
                                             <div class="mb-3">
-                                                <label for="barcode">Barcode</label>
-                                                <input type="text" name="barcode" id="barcode" class="form-control" placeholder="Barcode">
+                                                <input type="number" min="0" name="qty" id="qty"
+                                                    class="form-control" placeholder="Qty">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <div class="mb-3">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="hidden" name="track_qty" value="NO">
-                                                    <input class="custom-control-input" type="checkbox" id="track_qty" name="track_qty" value="YES" checked>
-                                                    <label for="track_qty" class="custom-control-label">Track Quantity</label>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <input type="number" min="0" name="qty" id="qty" class="form-control" placeholder="Qty">
-                                            </div>
+                                            <div id="variationsContainer" class="mb-2"></div>
+                                            <button type="button" class="btn btn-primary w-100" onclick="addVariations()">Add Variations</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h4>Additional Information</h4>
-                                        <div id="additionalInfoContainer" class="mb-2"></div>
-                                        <button type="button" class="btn btn-primary w-100" onclick="addNewInfo()">Add New Additional Information</button>
-                                    </div>
-                                </div>
-                        </div>
+                            
+
                         </div>
                         <div class="col-md-4">
-                            <div class="card">
+                            <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4  mb-3">Product category</h2>
                                     <div class="mb-3">
                                         <label for="category">Category</label>
                                         <select name="category_id" id="category" class="form-control">
                                             <option>Select A Category</option>
-                                            @if($categories->isNotEmpty())
-                                                @foreach($categories as $category)
+                                            @if ($categories->isNotEmpty())
+                                                @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
                                             @endif
@@ -187,8 +178,8 @@
                                     <div class="mb-3">
                                         <select name="brand_id" id="brand" class="form-control">
                                             <option value="">Select A Brand</option>
-                                            @if($brands->isNotEmpty())
-                                                @foreach($brands as $brand)
+                                            @if ($brands->isNotEmpty())
+                                                @foreach ($brands as $brand)
                                                     <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                 @endforeach
                                             @endif
@@ -207,12 +198,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card mb-3">
+                            {{-- <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Select Colors</h2>
                                     <div class="">
                                         <select id="colorSelect" class="form-control" name="color[]">
-                                            @foreach($colors as $color)
+                                            @foreach ($colors as $color)
                                                 <option value="{{ $color->color }}">{{ $color->color }}</option>
                                             @endforeach
                                         </select>
@@ -222,25 +213,33 @@
                                     <h2 class="h4 mb-3">Select Sizes</h2>
                                     <div class="mb-3">
                                         <select id="sizeSelect" class="form-control" name="size[]">
-                                            @foreach($sizes as $size)
+                                            @foreach ($sizes as $size)
                                                 <option value="{{ $size->size }}">{{ $size->size }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-{{--                                    <button type="button" id="generateVariationsBtn"class="btn btn-success">Generate Variations</button>--}}
+                                    
                                 </div>
 
                             </div>
                             <div class="card mb-3">
                                 <div id="imageFields" class="card-body"></div>
+                            </div> --}}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h4>Additional Information</h4>
+                                    <div id="additionalInfoContainer" class="mb-2"></div>
+                                    <button type="button" class="btn btn-primary w-100" onclick="addNewInfo()">Add
+                                        New Additional Information</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
+                    @if (Auth::guard('admin')->user()->access->product_manage == 3)
                     <div class="pb-5 pt-3">
                         <button type="submit" class="btn btn-primary">Create</button>
                     </div>
-
+                    @endif
                 </div>
 
             </form><!-- /.card -->
@@ -253,17 +252,17 @@
 @section('customjs')
     <script>
         ClassicEditor
-            .create( document.querySelector( '#editor' ),{
+            .create(document.querySelector('#editor'), {
                 ckfinder: {
-                    uploadUrl: "{{ route('ck.upload',['_token'=> csrf_token()]) }}",
+                    uploadUrl: "{{ route('ck.upload', ['_token' => csrf_token()]) }}",
                 }
-            } )
-            .then( editor => {
-                console.log( editor );
-            } )
-            .catch( error => {
-                console.error( error );
-            } );
+            })
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 
     <script>
@@ -281,76 +280,112 @@
             // Listen for changes in the name input and update the slug input
             $('#name').on('input', function() {
                 generateSlug();
-            }); here
+            });
+            here
         });
     </script>
     <script>
-        $("#category").change(function () {
+        $("#category").change(function() {
             var category_id = $(this).val();
             $.ajax({
-                url: '{{ route("product-subcategories") }}',
+                url: '{{ route('product-subcategories') }}',
                 type: 'get',
-                data: { category_id: category_id },
+                data: {
+                    category_id: category_id
+                },
                 dataType: 'json',
-                success: function (response) {
+                success: function(response) {
                     $("#sub_category").find("option").not(":first").remove();
-                    $.each(response["subCategory"], function (key, item) {
-                        $("#sub_category").append(`<option value='${item.id}'>${item.name}</option>`);
+                    $.each(response["subCategory"], function(key, item) {
+                        $("#sub_category").append(
+                            `<option value='${item.id}'>${item.name}</option>`);
                     });
                 },
-                error: function () {
+                error: function() {
                     console.log("Something Went Wrong!");
                 }
             });
         });
     </script>
 
-    <script type="text/javascript">
+    <script>
+        const input = document.getElementById("featured-image-upload");
+        const previewBox = document.getElementById("featured-image-preview");
 
+        input.addEventListener("change", function() {
+            const file = this.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    previewBox.style.display = "block";
+                    previewBox.innerHTML = `
+                        <div class="image-card-featured">
+                            <img src="${e.target.result}" alt="Preview" width="100%" height="100px" style="object-fit: cover;">
+                            <button class="remove-image-btn" id="removeImageBtn">
+                                <i class='fa-solid fa-trash'></i>
+                            </button>
+                            </div>
+                        `;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove image
+        document.addEventListener("click", function(e) {
+            if (e.target.closest("#removeImageBtn")) {
+                input.value = ""; // clear input
+                previewBox.innerHTML = "";
+                previewBox.style.display = "none";
+            }
+        });
+    </script>
+
+
+    <script type="text/javascript">
         Dropzone.autoDiscover = false;
         const dropzone = $("#image").dropzone({
-            url:  "{{ route('temp-images.create') }}",
+            url: "{{ route('temp-images.create') }}",
             maxFiles: 10,
             paramName: 'image',
             addRemoveLinks: true,
             acceptedFiles: "image/jpeg,image/png,image/gif,image/jpg,image/webp",
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-            }, success: function(file, response){
+            },
+            success: function(file, response) {
                 var html = `<div class="col-md-3" id="product-image-row-${response.image_id}">
                             <div class="card image-card">
-                                <a href="#" onclick="deleteImage(${response.image_id});" class="btn btn-danger">Delete</a>
-                                <img src="${response.imagePath}" class=" w-100 " height="100px">
+                                <a href="#" onclick="deleteImage(${response.image_id});" class="btn btn-danger"><i class='fa-solid fa-trash'></i></a>
+                                <img src="${response.imagePath}" class=" w-100 " height="100px" style="object-fit: cover;">
                                 <div class="card-body" style="display: none">
                                     <input type="hidden" name="image_id[]" value="${response.image_id}"/>
                                 </div>
                             </div>
                         </div>`;
                 $("#image-wrapper").append(html);
-                $("button[type=submit]").prop('disabled',false);
+                $("button[type=submit]").prop('disabled', false);
                 this.removeFile(file);
             }
         });
 
-
-
-
-
-        function deleteImage(id){
+        function deleteImage(id) {
             if (confirm("Are you sure you want to delete?")) {
-                $("#product-image-row-"+id).remove();
+                $("#product-image-row-" + id).remove();
             }
         }
     </script>
 
-    <script>
+    {{-- <script>
         $('#colorSelect').select2({
             multiple: true
         });
         $('#sizeSelect').select2({
             multiple: true
         });
-
     </script>
     <script>
         function generateImages() {
@@ -393,7 +428,7 @@
         $(document).ready(function() {
             generateImages();
         });
-    </script>
+    </script> --}}
 
     <script>
         function addNewInfo() {
@@ -438,5 +473,82 @@
         }
     </script>
 
-    @endsection
+<script>
+    function addVariations() {
+        var container = document.getElementById("variationsContainer");
 
+        var input1 = createInput("text", "variations[type][]", "Variations Name", "form-control w-25");
+        var inputBuy = createInput("text", "variations[buy_price][]", "Buying Price", "form-control w-25");
+        var input2 = createInput("text", "variations[price][]", "Price", "form-control w-25");
+        var input4 = createInput("text", "variations[compare_price][]", "Sale Price", "form-control w-25");
+        var input3 = createInput("number", "variations[qty][]", "Quantity", "form-control w-25");
+        var closeButton = createCloseButton1();
+
+        var infoContainer = document.createElement("div");
+        infoContainer.className = "additional-info d-flex mb-2 align-items-center gap-2";
+        infoContainer.appendChild(input1);
+        infoContainer.appendChild(inputBuy);
+        infoContainer.appendChild(input2);
+        infoContainer.appendChild(input4);
+        infoContainer.appendChild(input3);
+        infoContainer.appendChild(closeButton);
+
+        container.appendChild(infoContainer);
+
+        // Disable qty, buy_price, and price when variation exists
+        toggleMainInputs();
+
+        // Attach event listener to the close button
+        closeButton.addEventListener("click", function() {
+            container.removeChild(infoContainer);
+            toggleMainInputs(); // Check again if variations exist
+        });
+    }
+
+    function createCloseButton1() {
+        var closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.innerHTML = "✖";
+        closeButton.className = "btn btn-danger btn-sm";
+        return closeButton;
+    }
+
+    function createInput(type, name, placeholder, className, value) {
+        var input = document.createElement("input");
+        input.type = type;
+        input.name = name;
+        input.placeholder = placeholder;
+        input.className = className;
+        input.value = value || "";
+        return input;
+    }
+
+    function toggleMainInputs() {
+        var container = document.getElementById("variationsContainer");
+
+        var qtyInput = document.getElementById("qty");
+        var buyPriceInput = document.getElementById("buy_price");
+        var priceInput = document.getElementById("price");
+        var salePriceInput = document.getElementById("sale_price");
+
+        if (container.children.length > 0) {
+            qtyInput.value = "";
+            buyPriceInput.value = "";
+            priceInput.value = "";
+            salePriceInput.value = "";
+
+            qtyInput.disabled = true;
+            buyPriceInput.disabled = true;
+            priceInput.disabled = true;
+            salePriceInput.disabled = true;
+        } else {
+            qtyInput.disabled = false;
+            buyPriceInput.disabled = false;
+            priceInput.disabled = false;
+            salePriceInput.disabled = false;
+        }
+    }
+</script>
+
+
+@endsection

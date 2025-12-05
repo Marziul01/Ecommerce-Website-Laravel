@@ -62,9 +62,11 @@
                                         <input type="file" name="paymentImage" accept="image/*">
                                     </div>
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->settings == 3)
                                 <div class="col-md-12" style="padding: 30px 10px 0px 10px">
                                     <button type="submit" class="btn btn-primary">Save settings</button>
                                 </div>
+                                @endif
                             </div>
                         </div>
 

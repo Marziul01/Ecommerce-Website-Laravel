@@ -41,9 +41,11 @@
                                             <td class="image product-thumbnail"><img src="{{ asset($item->options['image']) }}"></td>
                                             <td class="product-des product-name">
                                                 <h5 class="product-name"><a href="{{ route('products', $item->options['slug']) }}">{{ $item->name }}</a></h5>
-                                                <p class="font-xs">Color: {{ !empty($item->options['color']) ? $item->options['color'] : 'No Color Selected'}} X
-                                                    Size: {{ !empty($item->options['size']) ? $item->options['size'] : 'No Size Selected'}}
-                                                </p>
+                                                @if (!empty($item->options['variation_id']))
+                                                    <p class="font-xs">
+                                                        Selected Option: {{ $item->options['variation_name'] }}
+                                                    </p>
+                                                @endif
                                             </td>
                                             <td class="price" data-title="Price"><span>{{ $item->price }} Tk</span></td>
                                             <td class="text-center" data-title="Stock">

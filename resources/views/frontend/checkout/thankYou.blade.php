@@ -91,9 +91,8 @@
                                         <a href="{{ route('products', $item->product->slug) }}"><img src="{{ asset($item->product->featured_image) }}" width="100px"></a>
                                         <div>
                                             <a href="{{ route('products', $item->product->slug) }}"><h4> {{ $item->product_name }} </h4></a>
-                                            <p class="text-center">
-                                                @if(isset($item->color)) Color : {{ $item->color }} x @endif
-                                                @if(isset($item->size)) x Size : {{ $item->size }} @endif
+                                            <p class="">
+                                                @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
                                             </p>
                                         </div>
                                     </td>

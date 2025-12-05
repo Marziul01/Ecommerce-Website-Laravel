@@ -24,6 +24,8 @@ class Rating extends Model
 
         $successMessage = "Your Review submitted successfully";
         $request->session()->flash('success', $successMessage);
+
+        return $rating;
     }
 
     public static function statusCheck($id){
@@ -34,6 +36,8 @@ class Rating extends Model
             $rating->status = 1;
         }
         $rating->save();
+
+        return $rating;
     }
 
     public function product(){

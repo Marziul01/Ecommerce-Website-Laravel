@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\SiteSetting;
@@ -16,6 +17,9 @@ class CouponController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->coupon == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.coupon.coupon',[
             'admin' => Auth::guard('admin')->user(),
             'siteSettings' => SiteSetting::where('id', 1)->first(),
@@ -36,6 +40,9 @@ class CouponController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->coupon != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'code' => 'required|unique:coupons',
@@ -44,7 +51,13 @@ class CouponController extends Controller
         ]);
         if ($validator->passes()){
 
-            Coupon::saveInfo($request);
+            $coupon = Coupon::saveInfo($request);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A new coupon has been created .';
+            $notification->notification_for = 'Coupon';
+            $notification->item_id = $coupon->id;
+            $notification->save();
             return redirect(route('coupons.index'));
 
         }else{
@@ -74,6 +87,10 @@ class CouponController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
+        if(Auth::guard('admin')->user()->access->coupon != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $coupon = Coupon::find($id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -84,6 +101,12 @@ class CouponController extends Controller
         if ($validator->passes()){
 
             Coupon::saveInfo($request,$id);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A coupon has been updated .';
+            $notification->notification_for = 'Coupon';
+            $notification->item_id = $coupon->id;
+            $notification->save();
             return redirect(route('coupons.index'));
 
         }else{
@@ -96,7 +119,17 @@ class CouponController extends Controller
      */
     public function destroy(string $id)
     {
-        Coupon::find($id)->delete($id);
+        if(Auth::guard('admin')->user()->access->coupon != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
+        $coupon = Coupon::find($id);
+        $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A coupon has been deleted .';
+            $notification->notification_for = 'Coupon';
+            $notification->item_id = $coupon->id;
+            $notification->save();
+            $coupon->delete();
         return redirect(route('coupons.index'));
     }
 }

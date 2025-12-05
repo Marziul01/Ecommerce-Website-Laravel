@@ -45,6 +45,8 @@ class Shipping extends Model
         $shipping->save();
 
         $request->session()->flash('success', 'Shipping method ' . $message. ' successfully');
+
+        return $shipping;
     }
 
     public function country(){

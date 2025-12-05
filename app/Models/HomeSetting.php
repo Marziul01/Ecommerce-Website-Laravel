@@ -34,6 +34,7 @@ class HomeSetting extends Model
         }
         self::$homeSetting->save();
         $request->session()->flash('success', 'Settings has been saved successfully');
+        return self::$homeSetting;
     }
 
     public static function saveImage($request){

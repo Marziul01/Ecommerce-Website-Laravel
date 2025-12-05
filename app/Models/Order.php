@@ -90,24 +90,60 @@ class Order extends Model
         self::$order->zip = ($request->shipping == 'Yes') ? $request->shipping_zipcode : $request->zipcode;
         self::$order->notes = $request->notes;
         self::$order->order_number = $orderNumber;
-        self::$order->payment_option = $request->payment_option;
+        self::$order->payment_option = $paymentType->name;
         self::$order->payment_number = $request->input("payment_number{$paymentType->id}");
 
         self::$order->save();
 
         $orderId = self::$order->id;
 
-        foreach (Cart::content() as $item){
-            OrderItem::details($request,$orderId,$item);
-            $productData = Product::find($item->id);
-            if ($productData->track_qty == 'YES'){
-                $currentQty = $productData->qty;
-                $updateQty = $currentQty - $item->qty;
-                $productData->qty = $updateQty;
-                $productData->save();
+        foreach (Cart::content() as $item) {
+
+            $product = Product::find($item->id);
+            $variationId = $item->options['variation_id'] ?? null;
+
+            // Reduce Product Variation Qty
+            if ($variationId) {
+                $variation = ProductVariation::find($variationId);
+                $variation->qty -= $item->qty;
+                $variation->save();
             }
 
+            // Reduce QuantityRequest FIFO
+            $consumedRequests = self::reduceFIFO($product->id, $variationId, $item->qty);
+
+            // Reduce Product Qty
+            if ($product->track_qty == 'YES') {
+                $product->qty -= $item->qty;
+                $product->save();
+            }
+
+            // Create OrderItem
+            $orderItem = OrderItem::create([
+                'order_id' => $orderId,
+                'product_id' => $product->id,
+                'product_name' => $item->name,
+                'product_variations_id' => $variationId,
+                'qty' => $item->qty,
+                'price' => $item->price,
+                'total' => $item->price * $item->qty,
+                'shipping' => $request->shipping_charge,
+                'subtotal' => ($item->price * $item->qty) + $request->shipping_charge,
+            ]);
+
+            // Save pivot rows
+            foreach ($consumedRequests as $c) {
+                OrderItemQuantityRequest::create([
+                    'order_item_id' => $orderItem->id,
+                    'quantity_request_id' => $c['request']->id,
+                    'qty_used' => $c['used'],
+                    'buy_price' => $c['request']->buy_price,   // Store cost price NOW
+                ]);
+            }
+
+            
         }
+
 
         Cart::destroy();
         session()->forget('code');
@@ -119,31 +155,80 @@ class Order extends Model
 
 
     public function saveImage( $request, $orderNumber, $methodId)
-{
-    // Retrieve the uploaded file
-    $file = $request->file("payment_prove{$methodId}");
+    {
+        // Retrieve the uploaded file
+        $file = $request->file("payment_prove{$methodId}");
 
-    if ($file) {
-        // Define the directory
-        $dir = "frontend-assets/imgs/payments/";
+        if ($file) {
+            // Define the directory
+            $dir = "frontend-assets/imgs/payments/";
 
-        // Ensure the directory exists
-        if (!file_exists(public_path($dir))) {
-            mkdir(public_path($dir), 0777, true);
+            // Ensure the directory exists
+            if (!file_exists(public_path($dir))) {
+                mkdir(public_path($dir), 0777, true);
+            }
+
+            // Create a unique file name
+            $fileName = $orderNumber . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+            // Move the file to the directory
+            $file->move(public_path($dir), $fileName);
+
+            // Return the relative file path
+            return $dir . $fileName;
         }
 
-        // Create a unique file name
-        $fileName = $orderNumber . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-        // Move the file to the directory
-        $file->move(public_path($dir), $fileName);
-
-        // Return the relative file path
-        return $dir . $fileName;
+        return null;
     }
 
-    return null;
-}
+    public static function reduceFIFO($productId, $variationId, $orderQty)
+    {
+        $query = QuantityRequest::whereNotNull('remaining_qty')
+            ->where('remaining_qty', '>', 0)
+            ->orderBy('created_at', 'ASC');
+
+        if ($variationId) {
+            $query->where('variation_id', $variationId);
+        } else {
+            $query->where('product_id', $productId);
+        }
+
+        $requests = $query->get();
+
+        $qtyLeft = $orderQty;
+        $consumed = [];  // will store rows like: [ 'request' => obj, 'used' => int ]
+
+        foreach ($requests as $req) {
+
+            if ($qtyLeft <= 0) break;
+
+            if ($req->remaining_qty >= $qtyLeft) {
+                // This request fully covers the needed qty
+                $consumed[] = [
+                    'request' => $req,
+                    'used' => $qtyLeft
+                ];
+
+                $req->remaining_qty -= $qtyLeft;
+                $req->save();
+
+                $qtyLeft = 0;
+            } else {
+                // Not enough, consume all of this row
+                $consumed[] = [
+                    'request' => $req,
+                    'used' => $req->remaining_qty
+                ];
+
+                $qtyLeft -= $req->remaining_qty;
+                $req->remaining_qty = 0;
+                $req->save();
+            }
+        }
+
+        return $consumed; // array of all consumed rows
+    }
+
 
 
     public function orderItems(){

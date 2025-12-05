@@ -60,9 +60,9 @@
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
                                                 <a href="{{ route('products',$product->slug) }}">
-                                                    <img class="default-img" src="{{ asset($product->featured_image) }}" alt="" height="280px">
+                                                    <img class="default-img" src="{{ asset($product->featured_image) }}" alt="">
                                                     @foreach($product->productGallery->take(1) as $image)
-                                                        <img class="hover-img" src="{{ asset($image->images) }}" alt="" height="280px">
+                                                        <img class="hover-img" src="{{ asset($image->images) }}" alt="">
                                                     @endforeach
                                                 </a>
                                             </div>
@@ -132,15 +132,67 @@
                                                 <span class="font-small ml-5 text-muted"> {{$product->ratings->where('status',1)->count()}}</span>
                                             </div>
                                             <div class="product-price">
-                                                <span>{{ $product->price }} Tk</span>
-                                                @if(isset($product->compare_price))
-                                                <span class="old-price">{{ $product->compare_price }} Tk</span>
+                                                @if ($product->productVariations->count() > 0)
+
+                                                    @php
+                                                        $variations = $product->productVariations;
+
+                                                        // Calculate selling price for each variation
+                                                        $sellingPrices = $variations->map(function ($v) {
+                                                            return $v->compare_price && $v->compare_price > 0
+                                                                ? $v->compare_price
+                                                                : $v->price;
+                                                        });
+
+                                                        $minSelling = $sellingPrices->min();
+                                                        $maxSelling = $sellingPrices->max();
+
+                                                        // Check if ANY variation has compare_price
+                                                        $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                        // For showing crossed price, we still need original ranges
+                                                        $minOriginal = $variations->min('price');
+                                                        $maxOriginal = $variations->max('price');
+                                                    @endphp
+
+                                                    {{-- IF THERE ARE SALE PRICES --}}
+                                                    @if ($hasSale)
+                                                        <span class="text-muted text-decoration-line-through">
+                                                            {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                        </span>
+                                                        <br>
+                                                        <span class="fw-bold">
+                                                            {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                        </span>
+
+                                                    {{-- NO SALE PRICE --}}
+                                                    @else
+                                                        <span class="fw-bold">
+                                                            {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                        </span>
+                                                    @endif
+
+                                                @else
+                                                    {{-- NO VARIATIONS --}}
+                                                    @if ($product->compare_price && $product->compare_price > 0)
+                                                        <span class="text-muted text-decoration-line-through">
+                                                            {{ number_format($product->price) }} BDT
+                                                        </span>
+                                                        <br>
+                                                        <span class="fw-bold">
+                                                            {{ number_format($product->compare_price) }} BDT
+                                                        </span>
+                                                    @else
+                                                        <span class="fw-bold">
+                                                            {{ number_format($product->price) }} BDT
+                                                        </span>
+                                                    @endif
                                                 @endif
                                             </div>
                                             <div class="product-action-1 show">
                                                 @if($product->track_qty == 'YES')
                                                     @if($product->qty > 0)
-                                                        @if(!empty($product->colors) || !empty($product->sizes))
+                                                        @if($product->productVariations->count() > 0)
                                                             <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                         @else
                                                             <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
@@ -154,7 +206,7 @@
                                                     @endif
 
                                                 @else
-                                                    @if(!empty($product->colors) || !empty($product->sizes))
+                                                    @if($product->productVariations->count() > 0)
                                                         <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                     @else
                                                         <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
@@ -164,7 +216,6 @@
                                                         </form>
                                                     @endif
                                                 @endif
-
                                             </div>
                                         </div>
                                     </div>
@@ -177,7 +228,7 @@
                     <!--pagination-->
                     <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             {{ $products->withQueryString()->links() }}
-=4
+
 {{--                        <nav aria-label="Page navigation example">--}}
 {{--                            <ul class="pagination justify-content-start">--}}
 {{--                                <li class="page-item active"><a class="page-link" href="#">01</a></li>--}}

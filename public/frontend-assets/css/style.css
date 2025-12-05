@@ -450,7 +450,25 @@ div:where(.swal2-icon).swal2-success .swal2-success-fix{
     border-radius: 50%;
     animation: spin 0.9s linear infinite;
 }
+.variation-box {
+    margin-bottom: 0!important;
+    padding: 1px 8px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+.variation-selected .variation-box{
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+.owl-carousel.slider_carousel1 .owl-nav{
+    display: none;
+}
+.product-cart-wrap .product-content-wrap .product-price .text-muted.text-decoration-line-through{
+    font-size: 13px !important;
+}
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
@@ -507,6 +525,21 @@ div:where(.swal2-icon).swal2-success .swal2-success-fix{
     .dot-style-1.dot-style-1-position-1 ul{
         bottom: 0px !important;
     }
+    .owl-carousel.slider_carousel1 .card-1 h5{
+        margin: 5px !important;
+        font-size: 12px !important;
+    }
+    .owl-carousel.slider_carousel1 .card-1{
+        border-radius: 5px !important;
+    }
+    .owl-carousel.slider_carousel1 .card-1 figure{
+        margin: 0px !important;
+        border-radius: 5px !important;
+    }
+    .owl-carousel.slider_carousel1 .card-1 figure img{
+        border-radius: 5px !important;
+    }
+    
 }
 @media only screen and (max-width: 480px) {
     .carausel-6-columns, .carausel-4-columns {

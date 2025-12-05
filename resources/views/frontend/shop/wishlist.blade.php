@@ -41,31 +41,89 @@
                                                 <p class="font-xs">{{ $wishlist->product->short_desc }}
                                                 </p>
                                             </td>
-                                            <td class="price" data-title="Price"><span>{{ $wishlist->product->price }} Tk</span></td>
+                                            <td class="price" data-title="Price">
+                                                <span>{{ $wishlist->product->price }} Tk</span>
+                                                @if ($wishlist->product->productVariations->count() > 0)
+
+                                                    @php
+                                                        $variations = $wishlist->product->productVariations;
+
+                                                        // Calculate selling price for each variation
+                                                        $sellingPrices = $variations->map(function ($v) {
+                                                            return $v->compare_price && $v->compare_price > 0
+                                                                ? $v->compare_price
+                                                                : $v->price;
+                                                        });
+
+                                                        $minSelling = $sellingPrices->min();
+                                                        $maxSelling = $sellingPrices->max();
+
+                                                        // Check if ANY variation has compare_price
+                                                        $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                        // For showing crossed price, we still need original ranges
+                                                        $minOriginal = $variations->min('price');
+                                                        $maxOriginal = $variations->max('price');
+                                                    @endphp
+
+                                                    {{-- IF THERE ARE SALE PRICES --}}
+                                                    @if ($hasSale)
+                                                        <span class="text-muted text-decoration-line-through">
+                                                            {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                        </span>
+                                                        <br>
+                                                        <span class="fw-bold">
+                                                            {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                        </span>
+
+                                                    {{-- NO SALE PRICE --}}
+                                                    @else
+                                                        <span class="fw-bold">
+                                                            {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                        </span>
+                                                    @endif
+
+                                                @else
+                                                    {{-- NO VARIATIONS --}}
+                                                    @if ($wishlist->product->compare_price && $wishlist->product->compare_price > 0)
+                                                        <span class="text-muted text-decoration-line-through">
+                                                            {{ number_format($wishlist->product->price) }} BDT
+                                                        </span>
+                                                        <br>
+                                                        <span class="fw-bold">
+                                                            {{ number_format($wishlist->product->compare_price) }} BDT
+                                                        </span>
+                                                    @else
+                                                        <span class="fw-bold">
+                                                            {{ number_format($wishlist->product->price) }} BDT
+                                                        </span>
+                                                    @endif
+                                                @endif
+                                            </td>
                                             <td class="text-right" data-title="Cart">
                                                 @if($wishlist->product->track_qty == 'YES')
                                                     @if($wishlist->product->qty > 0)
-                                                        @if(!empty($wishlist->product->colors) || !empty($wishlist->product->sizes))
-                                                            <a aria-label="Select options" class="btn btn-sm" href="{{ route('products', $wishlist->product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> Select Options </a>
+                                                        @if($wishlist->product->productVariations->count() > 0)
+                                                            <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $wishlist->product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                         @else
                                                             <form method="POST" action="{{ route('addToCart', $wishlist->product->id) }}" id="addToCartForm">
                                                                 @csrf
                                                                 <input name="quantity" value="1" type="hidden">
-                                                                <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="btn btn-sm"><i class="fi-rs-shopping-bag-add"></i> Add to cart</button>
+                                                                <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"></i></button>
                                                             </form>
                                                         @endif
                                                     @else
-                                                        <button aria-label="Out of Stock !" class="btn btn-sm stock-out">  <i class="fi-rs-shopping-bag-add"></i> Stock Out ! </button>
+                                                        <button aria-label="Out of Stock !" class="action-btn hover-up stock-out">  <i class="fi-rs-shopping-bag-add"></i> </button>
                                                     @endif
 
                                                 @else
-                                                    @if(!empty($wishlist->product->colors) || !empty($wishlist->product->sizes))
-                                                        <a aria-label="Select options" class="btn btn-sm" href="{{ route('products', $wishlist->product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> Select Options </a>
+                                                    @if($wishlist->product->productVariations->count() > 0)
+                                                        <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $wishlist->product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                     @else
                                                         <form method="POST" action="{{ route('addToCart', $wishlist->product->id) }}" id="addToCartForm">
                                                             @csrf
                                                             <input name="quantity" value="1" type="hidden">
-                                                            <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="btn btn-sm"><i class="fi-rs-shopping-bag-add"></i> Add to cart</button>
+                                                            <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"></i></button>
                                                         </form>
                                                     @endif
                                                 @endif
@@ -90,12 +148,92 @@
                                                     <h5 class="product-name"><a href="{{ route('products', $product->slug) }}">{{ $product->name }}</a></h5>
                                                     <p class="font-xs">{{ $product->short_desc }}</p>
                                                 </td>
-                                                <td class="price" data-title="Price"><span>{{ $product->price }} Tk</span></td>
-                                                <td class="text-center" data-title="Stock">
-                                                    <span class="color3 font-weight-bold">In Stock</span>
+                                                <td class="price" data-title="Price">
+                                                    @if ($product->productVariations->count() > 0)
+
+                                                        @php
+                                                            $variations = $product->productVariations;
+
+                                                            // Calculate selling price for each variation
+                                                            $sellingPrices = $variations->map(function ($v) {
+                                                                return $v->compare_price && $v->compare_price > 0
+                                                                    ? $v->compare_price
+                                                                    : $v->price;
+                                                            });
+
+                                                            $minSelling = $sellingPrices->min();
+                                                            $maxSelling = $sellingPrices->max();
+
+                                                            // Check if ANY variation has compare_price
+                                                            $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                            // For showing crossed price, we still need original ranges
+                                                            $minOriginal = $variations->min('price');
+                                                            $maxOriginal = $variations->max('price');
+                                                        @endphp
+
+                                                        {{-- IF THERE ARE SALE PRICES --}}
+                                                        @if ($hasSale)
+                                                            <span class="text-muted text-decoration-line-through">
+                                                                {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                            </span>
+                                                            <br>
+                                                            <span class="fw-bold">
+                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                            </span>
+
+                                                        {{-- NO SALE PRICE --}}
+                                                        @else
+                                                            <span class="fw-bold">
+                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                            </span>
+                                                        @endif
+
+                                                    @else
+                                                        {{-- NO VARIATIONS --}}
+                                                        @if ($product->compare_price && $product->compare_price > 0)
+                                                            <span class="text-muted text-decoration-line-through">
+                                                                {{ number_format($product->price) }} BDT
+                                                            </span>
+                                                            <br>
+                                                            <span class="fw-bold">
+                                                                {{ number_format($product->compare_price) }} BDT
+                                                            </span>
+                                                        @else
+                                                            <span class="fw-bold">
+                                                                {{ number_format($product->price) }} BDT
+                                                            </span>
+                                                        @endif
+                                                    @endif
                                                 </td>
+                                               
                                                 <td class="text-right" data-title="Cart">
-                                                    <button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
+                                                    @if($product->track_qty == 'YES')
+                                                        @if($product->qty > 0)
+                                                            @if($product->productVariations->count() > 0)
+                                                                <a aria-label="Select options" class="btn btn-primary action-btn hover-up" href="{{ route('products', $product->slug) }}"> Select options </a>
+                                                            @else
+                                                                <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
+                                                                    @csrf
+                                                                    <input name="quantity" value="1" type="hidden">
+                                                                    <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="btn btn-primary action-btn hover-up">Add To Cart</button>
+                                                                </form>
+                                                            @endif
+                                                        @else
+                                                            <button aria-label="Out of Stock !" class="action-btn hover-up stock-out">  Out of Stock </button>
+                                                        @endif
+
+                                                    @else
+                                                        @if($product->productVariations->count() > 0)
+                                                            <a aria-label="Select options" class="btn btn-primary action-btn hover-up" href="{{ route('products', $product->slug) }}"> Select options </a>
+                                                        @else
+                                                            <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
+                                                                @csrf
+                                                                <input name="quantity" value="1" type="hidden">
+                                                                <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="btn btn-primary action-btn hover-up">Add To Cart</button>
+                                                            </form>
+                                                        @endif
+                                                    @endif
                                                 </td>
                                                 <td class="action" data-title="Remove"><a onclick="addToWishlistAndReload({{$product->id}})" href="javascript:void(0)"><i class="fi-rs-trash"></i></a></td>
                                             </tr>

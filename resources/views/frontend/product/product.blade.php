@@ -74,13 +74,65 @@
                                         </div>
                                     </div>
                                     <div class="clearfix product-price-cover">
-                                        <div class="product-price primary-color float-left">
+                                        {{-- <div class="product-price primary-color float-left">
                                             <ins><span class="text-brand">${{ $product->price }}</span></ins>
                                             @if(isset($product->compare_price))
                                             <ins><span class="old-price font-md ml-15">{{ $product->compare_price }}</span></ins>
                                             <span class="save-price  font-md color3 ml-15">{{ round((($product->compare_price - $product->price) / $product->compare_price) * 100) }}% Off</span>
                                             @endif
+                                        </div> --}}
+                                        <div id="priceArea">
+
+                                            @if ($product->productVariations->count() > 0)
+
+                                                @php
+                                                    $variations = $product->productVariations;
+
+                                                    $sellingPrices = $variations->map(fn($v) =>
+                                                        $v->compare_price > 0 ? $v->compare_price : $v->price
+                                                    );
+
+                                                    $minSelling = $sellingPrices->min();
+                                                    $maxSelling = $sellingPrices->max();
+
+                                                    $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                    $minOriginal = $variations->min('price');
+                                                    $maxOriginal = $variations->max('price');
+                                                @endphp
+
+                                                @if ($hasSale)
+                                                    <div class="text-muted text-decoration-line-through">
+                                                        {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                    </div>
+
+                                                    <div class="fw-bold fs-5">
+                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                    </div>
+
+                                                @else
+                                                    <div class="fw-bold fs-5">
+                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                    </div>
+                                                @endif
+
+                                            @else
+                                                @if ($product->compare_price > 0)
+                                                    <div class="text-muted text-decoration-line-through">
+                                                        {{ number_format($product->price) }} BDT
+                                                    </div>
+                                                    <div class="fw-bold fs-4">
+                                                        {{ number_format($product->compare_price) }} BDT
+                                                    </div>
+                                                @else
+                                                    <div class="fw-bold fs-4">
+                                                        {{ number_format($product->price) }} BDT
+                                                    </div>
+                                                @endif
+                                            @endif
+
                                         </div>
+
                                     </div>
                                     <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                     <div class="short-desc mb-30">
@@ -93,38 +145,36 @@
                                             <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                         </ul>
                                     </div>
+                                    <div class="mb-3">
+                                        <p>Availability: <span id="availabilityArea" class="ml-5 in-stock text-success">
+                                            {{ $product->qty }} Items In Stock
+                                        </span></p>
+                                    </div>
                                     <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
                                         @csrf
-                                        @if(isset($colors) && !empty($colors))
-                                            <div class="attr-detail attr-color mb-15">
-                                                <strong class="mr-10">Color</strong>
-                                                <ul class="list-filter color-filter">
-                                                    @foreach($colors as $color)
-                                                        <li>
-                                                            <label class="color-option">
-                                                                <input type="radio" name="color" value="{{ $color }}" style="display: none">
-                                                                <i class="bi bi-circle-fill colors" style="color: {{ $color }}; font-size: 25px; cursor: pointer;"></i>
-                                                                <div class="selection-dot"></div>
-                                                            </label>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif
 
-                                        @if(isset($sizes) && !empty($sizes))
-                                            <div class="attr-detail attr-size mb-15">
-                                                <strong class="mr-10">Size</strong>
-                                                <ul class="list-filter size-filter font-small">
-                                                    @foreach($sizes as $size)
-                                                        <li>
-                                                            <label class="size-label">
-                                                                <input type="radio" name="size" value="{{ $size }}" style="display: none">
-                                                                <p style="margin-bottom: 0px !important;padding: 1px 8px; border: 1px solid lightgrey; border-radius: 5px; cursor: pointer;">{{ $size }}</p>
-                                                            </label>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
+                                        @if($product->productVariations->count() > 0)
+                                            <div class="attr-detail mb-15">
+                                                <p><strong class="mr-10">Choose a option</strong></p>
+                                                <div>
+                                                    <ul class="list-filter size-filter font-small" id="variationList">
+                                                        @foreach($product->productVariations as $variation)
+                                                            <li>
+                                                                <label class="size-label variation-option"
+                                                                    data-id="{{ $variation->id }}"
+                                                                    data-price="{{ $variation->price }}"
+                                                                    data-sale="{{ $variation->compare_price }}"
+                                                                    data-type="{{ $variation->type }}"
+                                                                    data-qty="{{ $variation->qty }}"
+                                                                >
+                                                                    <input type="radio" name="variation" value="{{ $variation->id }}" hidden>
+                                                                    <p class="variation-box">{{ $variation->type }}</p>
+                                                                </label>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+
+                                                </div>
                                             </div>
                                         @endif
 
@@ -173,7 +223,7 @@
 
                                     <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU:{{ $product->sku }} <a href="#"></a></li>
-                                        <li>Availability:<span class="in-stock text-success ml-5">{{$product->qty}} Items In Stock</span></li>
+                                        {{-- <li>Availability:<span class="in-stock text-success ml-5">{{$product->qty}} Items In Stock</span></li> --}}
                                         <div class="social-icons single-share mt-2">
                                             <ul class="text-grey-5 d-inline-block">
                                                 <li><strong class="mr-10">Share this:</strong></li>
@@ -195,9 +245,12 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Additional Information</button>
                             </li>
+                            
+                            @if(isset($product->subCategory->size_chart))
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Size Chart</button>
                             </li>
+                            @endif
                         </ul>
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
@@ -221,6 +274,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if(isset($product->subCategory->size_chart))
                             <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
                                 <h3 class="section-title style-1 mb-30">Size Chart</h3>
                                 @if(isset($product->subCategory->size_chart))
@@ -229,6 +283,7 @@
                                     No Size Chart Available For this Product
                                 @endif
                             </div>
+                            @endif
                         </div>
                         <div class="row">
                             <div class="col-lg-12 m-auto entry-main-content">
@@ -300,7 +355,7 @@
                                     </div>
                                 </div>
                                 <!--comment form-->
-                                <div class="comment-form">
+                                {{-- <div class="comment-form">
                                     <h4 class="mb-15">Add a review</h4>
 
                                     </div>
@@ -348,7 +403,7 @@
                                             </form>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
 
@@ -436,15 +491,68 @@
                                                     <span class="font-small ml-5 text-muted"> {{$product->ratings->where('status',1)->count()}}</span>
                                                 </div>
                                                 <div class="product-price">
-                                                    <span>{{ $product->price }} Tk</span>
-                                                    @if(isset($product->compare_price))
-                                                        <span class="old-price">{{ $product->compare_price }} Tk</span>
+                                                    
+                                                    @if ($product->productVariations->count() > 0)
+
+                                                        @php
+                                                            $variations = $product->productVariations;
+
+                                                            // Calculate selling price for each variation
+                                                            $sellingPrices = $variations->map(function ($v) {
+                                                                return $v->compare_price && $v->compare_price > 0
+                                                                    ? $v->compare_price
+                                                                    : $v->price;
+                                                            });
+
+                                                            $minSelling = $sellingPrices->min();
+                                                            $maxSelling = $sellingPrices->max();
+
+                                                            // Check if ANY variation has compare_price
+                                                            $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                            // For showing crossed price, we still need original ranges
+                                                            $minOriginal = $variations->min('price');
+                                                            $maxOriginal = $variations->max('price');
+                                                        @endphp
+
+                                                        {{-- IF THERE ARE SALE PRICES --}}
+                                                        @if ($hasSale)
+                                                            <span class="text-muted text-decoration-line-through">
+                                                                {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                            </span>
+                                                            <br>
+                                                            <span class="fw-bold">
+                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                            </span>
+
+                                                        {{-- NO SALE PRICE --}}
+                                                        @else
+                                                            <span class="fw-bold">
+                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                            </span>
+                                                        @endif
+
+                                                    @else
+                                                        {{-- NO VARIATIONS --}}
+                                                        @if ($product->compare_price && $product->compare_price > 0)
+                                                            <span class="text-muted text-decoration-line-through">
+                                                                {{ number_format($product->price) }} BDT
+                                                            </span>
+                                                            <br>
+                                                            <span class="fw-bold">
+                                                                {{ number_format($product->compare_price) }} BDT
+                                                            </span>
+                                                        @else
+                                                            <span class="fw-bold">
+                                                                {{ number_format($product->price) }} BDT
+                                                            </span>
+                                                        @endif
                                                     @endif
                                                 </div>
                                                 <div class="product-action-1 show">
                                                     @if($product->track_qty == 'YES')
                                                         @if($product->qty > 0)
-                                                            @if(!empty($product->colors) || !empty($product->sizes))
+                                                            @if($product->productVariations->count() > 0)
                                                                 <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                             @else
                                                                 <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
@@ -458,7 +566,7 @@
                                                         @endif
 
                                                     @else
-                                                        @if(!empty($product->colors) || !empty($product->sizes))
+                                                        @if($product->productVariations->count() > 0)
                                                             <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
                                                         @else
                                                             <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
@@ -520,6 +628,52 @@
         });
     </script>
 
+    <script>
+document.querySelectorAll('.variation-option').forEach(option => {
+    option.addEventListener('click', function() {
+
+        // Remove selection from all
+        document.querySelectorAll('.variation-option').forEach(o => {
+            o.classList.remove('variation-selected');
+            o.querySelector('input').checked = false;
+        });
+
+        // Add selected class
+        this.classList.add('variation-selected');
+        this.querySelector('input').checked = true;
+
+        // Get data
+        let price = parseFloat(this.dataset.price);
+        let sale = parseFloat(this.dataset.sale);
+        let qty   = parseInt(this.dataset.qty);   // NEW
+
+        // Update price area
+        let html = "";
+
+        if (sale > 0) {
+            html += `
+                <div class="text-muted text-decoration-line-through">
+                    ${price.toLocaleString()} BDT
+                </div>
+                <div class="fw-bold fs-4">
+                    ${sale.toLocaleString()} BDT
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="fw-bold fs-4">
+                    ${price.toLocaleString()} BDT
+                </div>
+            `;
+        }
+
+        document.getElementById('priceArea').innerHTML = html;
+
+        document.getElementById('availabilityArea').innerHTML =
+            `<span class="in-stock text-success ml-5">${qty} Items In Stock</span>`;
+    });
+});
+</script>
 
 
 @endsection

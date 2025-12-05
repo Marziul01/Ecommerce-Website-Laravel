@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\SiteSetting;
 use App\Models\User;
 use App\Models\Userinfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use function Symfony\Component\Process\findArguments;
+
 
 class UserController extends Controller
 {
@@ -18,6 +20,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->user_manage == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.users.manage',[
             'admin' => Auth::guard('admin')->user(),
             'users' =>  User::where('role', 1)->latest()->paginate(10),
@@ -38,6 +43,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->user_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $rules = [
             'name' => 'required',
             'email' => 'required|unique:users ',
@@ -58,6 +66,14 @@ class UserController extends Controller
 
             $successMessage = "User has been created successfully";
             $request->session()->flash('success', $successMessage);
+
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = $user->name .' A New User has been created.';
+                $notification->notification_for = 'User';
+                $notification->item_id = $user->id;
+                $notification->save();
+
             return redirect(route('users.index'));
         } else {
             return back()->withErrors($validator);
@@ -85,6 +101,9 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(Auth::guard('admin')->user()->access->user_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $user = User::find($id);
 
         // Separate validation for email
@@ -121,6 +140,14 @@ class UserController extends Controller
 
             $successMessage = "User has been updated successfully";
             $request->session()->flash('success', $successMessage);
+
+            $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = $user->name .' User has been updated.';
+                $notification->notification_for = 'User';
+                $notification->item_id = $user->id;
+                $notification->save();
+
             return redirect(route('users.index'));
         } else {
             return back()->withErrors($validator);
@@ -132,7 +159,16 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+        if(Auth::guard('admin')->user()->access->user_manage != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $user = User::find($id);
+        $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = $user->name .' User has been deleted.';
+                $notification->notification_for = 'User';
+                $notification->item_id = $user->id;
+                $notification->save();
         $user->delete();
 
         return redirect(route('users.index'));

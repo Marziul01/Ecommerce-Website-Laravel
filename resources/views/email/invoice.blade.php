@@ -99,8 +99,7 @@
                     <td class="row1-col1">
                         <h4> {{ $item->product_name }} </h4>
                         <p>
-                            @if(isset($item->color)) Color : {{ $item->color }} x @endif
-                            @if(isset($item->size)) x Size : {{ $item->size }} @endif
+                            @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
                         </p>
                     </td>
                     <td class="row1-col2">

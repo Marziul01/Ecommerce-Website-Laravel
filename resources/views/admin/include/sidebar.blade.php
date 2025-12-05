@@ -21,9 +21,31 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
+    @if (Auth::guard('admin')->user()->access->control_panel != 2)
+        {{-- <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('admin.control.panel') }}">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Control Panel</span>
+            </a>
+        </li> --}}
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrderControl"
+            aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fa-solid fa-shield-halved"></i>
+                <span>Control Panel</span>
+            </a>
+            <div id="collapseOrderControl" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('admin.control.panel') }}">Admins Control</a>
+                    <a class="collapse-item" href="{{ route('admin.log') }}">Admins Access Report</a>
+                </div>
+            </div>
+        </li>
+    @endif
+    
 
     <!-- Nav Item - Pages Collapse Menu -->
-
+    @if (Auth::guard('admin')->user()->access->order_manage != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrder"
            aria-expanded="true" aria-controls="collapseTwo">
@@ -42,7 +64,8 @@
             </div>
         </div>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->category != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrder2"
            aria-expanded="true" aria-controls="collapseTwo">
@@ -56,7 +79,8 @@
             </div>
         </div>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->brand != 2)
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
@@ -66,13 +90,17 @@
         </a>
 
     </li>
+    @endif
+    @if (Auth::guard('admin')->user()->access->product_manage != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('product.index') }}">
             <i class="fa-solid fa-box"></i>
             <span>Product Manage</span>
         </a>
     </li>
-    <li class="nav-item">
+    @endif
+    @if (Auth::guard('admin')->user()->access->coupon != 2)
+    {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVariation"
            aria-expanded="true" aria-controls="collapseTwo">
            <i class="fa-solid fa-list-check"></i>
@@ -84,34 +112,39 @@
                 <a class="collapse-item" href="{{ route('variationSize') }}">Sizes</a>
             </div>
         </div>
-    </li>
+    </li> --}}
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('coupons.index') }}">
             <i class="fa-solid fa-ticket"></i>
             <span>Coupon Manage</span>
         </a>
     </li>
+    @endif
+    @if (Auth::guard('admin')->user()->access->shipping != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('shipping') }}">
             <i class="fa-solid fa-truck-arrow-right"></i>
             <span>Shipping Charge Manage</span>
         </a>
     </li>
-    
+    @endif
+    @if (Auth::guard('admin')->user()->access->payment_methods != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('payment_methods.index') }}">
             <i class="fa-solid fa-money-check"></i>
             <span>Payment Methods Manage</span>
         </a>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->sales_report != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('sales_report') }}">
             <i class="fa-solid fa-money-bill-trend-up"></i>
             <span>Sales Report</span>
         </a>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->settings != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSite"
            aria-expanded="true" aria-controls="collapseTwo">
@@ -125,7 +158,8 @@
             </div>
         </div>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->pages_manage != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
            aria-expanded="true" aria-controls="collapseTwo">
@@ -142,20 +176,23 @@
             </div>
         </div>
     </li>
-
+    @endif
+    @if (Auth::guard('admin')->user()->access->user_manage != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('users.index') }}">
             <i class="fa-solid fa-users"></i>
             <span>Customers Manage</span>
         </a>
     </li>
+    @endif
+    @if (Auth::guard('admin')->user()->access->review_manage != 2)
     <li class="nav-item">
         <a class="nav-link collapsed" href="{{ route('reviews') }}">
             <i class="fa-solid fa-file-pen"></i>
             <span>Reviews Manage</span>
         </a>
     </li>
-
+    @endif
 
 </ul>
 

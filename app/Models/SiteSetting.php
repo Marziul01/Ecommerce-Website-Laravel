@@ -37,6 +37,8 @@ class SiteSetting extends Model
 
         $successMessage = "Site Settings has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$setting;
     }
 
     public static function updateHeader($request){
@@ -50,6 +52,7 @@ class SiteSetting extends Model
         self::$setting->hotline = $request->hotline;
         self::$setting->save();
         $request->session()->flash('success', 'Header Settings has been saved successfully');
+        return self::$setting;
     }
 
     public static function updateFooter($request){
@@ -73,6 +76,7 @@ class SiteSetting extends Model
         }
         self::$setting->save();
         $request->session()->flash('success', 'Footer Settings has been saved successfully');
+        return self::$setting;
     }
 
 

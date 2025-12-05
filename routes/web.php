@@ -36,8 +36,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\SaleReports;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\OrdersExport;
-
-
+use App\Http\Controllers\AdminAccessController;
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}',[ShopController::class,'index'])->name('shop');
@@ -167,8 +166,18 @@ Route::group(['prefix' => 'admin'],function(){
         Route::post('/update/slider/store',[PagesController::class,'sliderstore'])->name('sliderstore');
         Route::resources(['payment_methods' => PaymentMethodController::class]);
         Route::get('sales/report',[SaleReports::class,'salesReport'])->name('sales_report');
+        Route::get('/products/view/{id}', [ProductController::class, 'viewProduct'])->name('products.view');
+        Route::post('/products/update-quantity', [ProductController::class, 'updateQuantity'])->name('products.updateQuantity');
+        Route::get('/products/shipments/{id}',[ProductController::class,'shipments'])->name('product.shipment');
+        Route::get('/products/shipments/update/{id}',[ProductController::class,'shipmentsUpdate'])->name('product.shipment.edit');
+        Route::get('/products/shipments/delete/{id}',[ProductController::class,'shipmentDelete'])->name('product.shipment.delete');
 
-
+        Route::get('/control/panel/admins', [AdminAccessController::class, 'admins'])->name('admin.control.panel');
+        Route::post('/control/panel/store', [AdminAccessController::class, 'store'])->name('admin.control.store');
+        Route::post('/control/panel/{id}/status', [AdminAccessController::class, 'status'])->name('admin.control.status');
+        Route::post('/control/panel/{id}', [AdminAccessController::class, 'update'])->name('admin.control.update');
+        Route::post('/control/panel/delete/{id}', [AdminAccessController::class, 'delete'])->name('admin.control.delete');
+        Route::get('admin/log/info',[AdminAccessController::class,'adminLog'])->name('admin.log');
     });
 
 });

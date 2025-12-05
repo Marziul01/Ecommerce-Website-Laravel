@@ -101,7 +101,7 @@
                                                 </div>
                                                 <div class="shopping-cart-title">
                                                     <h4><a href="{{ route('products', $item->options['slug']) }}">{{ $item->name }}</a></h4>
-                                                    <h4><span>{{ $item->qty }} × </span>${{ $item->price }}</h4>
+                                                    <h4><span>{{ $item->qty }} × </span>{{ $item->price }} BDT</h4>
                                                 </div>
                                                 <div class="shopping-cart-delete">
                                                     <a href="{{ route('removeFromCart', $item->rowId) }}"><i class="fi-rs-cross-small"></i></a>
@@ -111,7 +111,7 @@
                                     </ul>
                                     <div class="shopping-cart-footer">
                                         <div class="shopping-cart-total">
-                                            <h4>Total <span>${{ Cart::subtotal() }}</span></h4>
+                                            <h4>Total <span>{{ Cart::subtotal() }} BDT</span></h4>
                                         </div>
                                         <div class="shopping-cart-button">
                                             <a href="{{ route('cart') }}" class="outline">View cart</a>

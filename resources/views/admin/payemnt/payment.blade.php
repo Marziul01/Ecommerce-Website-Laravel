@@ -20,8 +20,10 @@ Payment Methods
     <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800"> Payment Methods</h1>
+             @if (Auth::guard('admin')->user()->access->payment_methods == 3)
             <a href="#" class=" d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#AddCouponModal">
                 <i class="bi bi-file-earmark-plus"></i> Add New</a>
+                @endif
         </div>
 
         <div class="card">
@@ -61,6 +63,7 @@ Payment Methods
                                     @endif
                                 </td>
                                 <td class="table-action-td">
+                                    @if (Auth::guard('admin')->user()->access->payment_methods == 3)
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#EditCouponModal_{{ $PaymentMethod->id }}"><i class="bi bi-pen-fill"></i> Edit</a>
                                     @if($PaymentMethod->status == 1)
                                         <a class="btn btn-sm btn-warning" href="{{ route('payment_methods.show', $PaymentMethod->id) }}"><i class="bi bi-x-circle-fill"></i> Inactive</a>
@@ -73,7 +76,7 @@ Payment Methods
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
                                     </form>
-
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

@@ -66,10 +66,11 @@
                                     <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer1->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                 @endif
                             </div>
+                            @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                             <div class="col-md-6 mb-2">
                                 <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                             </div>
-
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -117,9 +118,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer2->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -170,9 +173,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer3->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -223,9 +228,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer4->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -276,9 +283,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer5->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -341,9 +350,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer6->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -406,9 +417,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer7->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -459,9 +472,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer8->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -512,9 +527,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer9->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -565,9 +582,11 @@
                                         <a class="btn btn-sm btn-success" href="{{ route('offer-show', $offer10->id) }}"><i class="bi bi-check-circle-fill"></i> Active</a>
                                     @endif
                                 </div>
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <div class="col-md-6 mb-2">
                                     <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                 </div>
+                                @endif
                             </div>
 
 
@@ -600,11 +619,13 @@
                             <td> <img src=" {{ asset( $slider->image ) }} " width="100px" > </td>
                             <td> {{ $slider->link }} </td>
                             <td> 
+                                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                 <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#EditCategoryModal_{{ $slider->id }}"><i class="bi bi-pen-fill"></i> Edit</a>
                                 <form action="{{ route('sliderdestroy', $slider->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this slider?');">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -643,10 +664,11 @@
                             </div>
                             <div class="col-md-12 mb-2" style="padding-top: 20px;">
                                 <div class="row">
-
+                                    @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                     <div class="col-md-6 mb-2">
                                         <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                     </div>
+                                    @endif
                                 </div>
 
                             </div>
@@ -677,10 +699,11 @@
                             </div>
                             <div class="col-md-12 mb-2" style="padding-top: 20px;">
                                 <div class="row">
-
+                                    @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                     <div class="col-md-6 mb-2">
                                         <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                     </div>
+                                    @endif
                                 </div>
 
                             </div>
@@ -709,9 +732,11 @@
                             </div>
                             <div class="col-md-12 mb-2" style="padding-top: 20px;">
                                 <div class="row">
+                                    @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                                     <div class="col-md-6 mb-2">
                                         <button class="btn btn-sm btn-primary" type="submit">Save Settings</button>
                                     </div>
+                                    @endif
                                 </div>
 
                             </div>

@@ -12,6 +12,9 @@ class SaleReports extends Controller
 {
     public static function salesReport(Request $request)
 {
+    if(Auth::guard('admin')->user()->access->sales_report == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
     $query = Order::query();
 
     // Apply date filter if dates are provided

@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'role',
+        'role_type',    
+        'status'
     ];
 
     /**
@@ -49,6 +53,11 @@ class User extends Authenticatable
 
     public function userInfo(){
         return $this->belongsTo(Userinfo::class);
+    }
+
+    public function access()
+    {
+        return $this->hasOne(AdminAccess::class, 'admin_id');
     }
 
 }

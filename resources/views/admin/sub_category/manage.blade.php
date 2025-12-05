@@ -20,8 +20,10 @@
     <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Sub Category</h1>
+            @if (Auth::guard('admin')->user()->access->category == 3)
             <a href="#" class=" d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#AddSubCategoryModal">
                 <i class="bi bi-file-earmark-plus"></i> Add New</a>
+                @endif
         </div>
 
         <div class="card">
@@ -63,6 +65,7 @@
                                     @endif
                                 </td>
                                 <td class="table-action-td">
+                                    @if (Auth::guard('admin')->user()->access->category == 3)
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#EditCategoryModal_{{ $subcategory->id }}"><i class="bi bi-pen-fill"></i> Edit</a>
                                     @if($subcategory->status == 1)
                                         <a class="btn btn-sm btn-warning" href="{{ route('subcategory.show', $subcategory->id) }}"><i class="bi bi-x-circle-fill"></i> Inactive</a>
@@ -75,7 +78,7 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i> Delete</button>
                                     </form>
-
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

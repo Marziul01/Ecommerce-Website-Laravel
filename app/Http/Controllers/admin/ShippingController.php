@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\District;
@@ -16,7 +17,9 @@ use Illuminate\Support\Facades\Validator;
 class ShippingController extends Controller
 {
     public static function index(){
-
+        if(Auth::guard('admin')->user()->access->shipping == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.shipping.shipping',[
             'admin' => Auth::guard('admin')->user(),
             'shippings' =>  Shipping::latest()->paginate(10),
@@ -27,7 +30,9 @@ class ShippingController extends Controller
     }
 
     public static function store(Request $request){
-
+        if(Auth::guard('admin')->user()->access->shipping != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $country = Country::where('code', $request->country_code)->first();
 
         $existingShipping = Shipping::where('country_id', $country->id)
@@ -46,7 +51,13 @@ class ShippingController extends Controller
             $validator = Validator::make($request->all(),$rules);
 
             if ($validator->passes()){
-                Shipping::saveInfo($request);
+                $shipping = Shipping::saveInfo($request);
+                $notification = new AdminNotification();
+                $notification->admin_id = auth()->id();
+                $notification->message = 'A new shipping method has been created .';
+                $notification->notification_for = 'Shipping';
+                $notification->item_id = $shipping->id;
+                $notification->save();
                 return redirect(route('shipping'));
             }else{
                 return back()->withErrors($validator);
@@ -56,11 +67,23 @@ class ShippingController extends Controller
     }
 
     public static function delete($id){
+        if(Auth::guard('admin')->user()->access->shipping != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         Shipping::find($id)->delete();
+        $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A shipping method has been deleted .';
+            $notification->notification_for = 'Shipping';
+            $notification->item_id = $id;
+            $notification->save();
         return redirect(route('shipping'));
     }
 
     public static function update(Request $request,$id){
+        if(Auth::guard('admin')->user()->access->shipping != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $rules=[
             'country_code' => 'required',
             'shipping_area' => 'required',
@@ -71,6 +94,12 @@ class ShippingController extends Controller
 
         if ($validator->passes()){
             Shipping::saveInfo($request,$id);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A shipping method has been updated .';
+            $notification->notification_for = 'Shipping';
+            $notification->item_id = $id;
+            $notification->save();
             return redirect(route('shipping'));
         }else{
             return back()->withErrors($validator);

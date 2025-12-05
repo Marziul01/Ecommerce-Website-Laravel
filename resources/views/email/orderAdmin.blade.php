@@ -83,9 +83,8 @@
                 <div class="col-md-8 d-flex border-right" style="column-gap: 50px; border-bottom: 0px !important;">
                     <div>
                         <h4> {{ $item->product_name }} </h4>
-                        <p class="text-center">
-                            @if(isset($item->color)) Color : {{ $item->color }} x @endif
-                            @if(isset($item->size)) x Size : {{ $item->size }} @endif
+                        <p class="">
+                             @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
                         </p>
                     </div>
                 </div>

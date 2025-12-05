@@ -39,7 +39,7 @@
 @include('frontend.include.footer')
 
 <!-- Preloader Start -->
-// <!-- @include('frontend.include.preloader')-->//
+<!-- @include('frontend.include.preloader')-->
 
 <div id="loaderOverlay">
     <div class="loaderOverlay-div">
@@ -157,7 +157,7 @@
                     </div>
                     <div class="shopping-cart-title">
                         <h4><a href="${item.options.slug}">${item.name}</a></h4>
-                        <h4><span>${item.qty} × </span>$${item.price}</h4>
+                        <h4><span>${item.qty} × </span>${item.price} BDT</h4>
                     </div>
                     <div class="shopping-cart-delete">
                         <a href="${item.removeUrl}"><i class="fi-rs-cross-small"></i></a>
@@ -171,7 +171,7 @@
             dropdownContent += `
             <div class="shopping-cart-footer">
                 <div class="shopping-cart-total">
-                    <h4>Total <span>$${cartSubtotal}</span></h4>
+                    <h4>Total <span>${cartSubtotal} BDT</span></h4>
                 </div>
                 <div class="shopping-cart-button">
                     <a href="{{ route('cart') }}" class="outline">View cart</a>

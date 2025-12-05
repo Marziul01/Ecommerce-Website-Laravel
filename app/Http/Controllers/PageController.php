@@ -74,10 +74,10 @@ class PageController extends Controller
         if ($validator->passes()) {
 
             $admin = User::where('role', 0)->first();
-
+            $siteemail = SiteSetting::first();
             $name = $request->name;
 
-            Mail::to($admin->email)->send(new Contact($request));
+            Mail::to($siteemail->email)->send(new Contact($request));
 
             Notification::send($admin, new NewContactNotification($name));
 

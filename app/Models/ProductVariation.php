@@ -9,6 +9,15 @@ class ProductVariation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'product_id',
+        'type',
+        'price',
+        'qty',
+        'buy_price',
+        'compare_price'
+    ];
+
     public static function updateInfo($request){
         $ids = $request->id;
         $productIds = $request->product_id;

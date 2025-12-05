@@ -29,55 +29,173 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class CartController extends Controller
 {
+    // public function addToCart(Request $request, $id)
+    // {
+    //     $product = Product::find($id);
+
+    //     if (!empty($product)) {
+    //         $color = $request->input('color');
+    //         $size = $request->input('size');
+    //         $quantity = $request->input('quantity');
+
+    //         // Validate the inputs if necessary
+
+    //         // Check if the product already exists in the cart
+    //         $productAlreadyExist = Cart::search(function ($cartItem, $rowId) use ($product, $color, $size) {
+    //             return $cartItem->id == $product->id && $cartItem->options->color == $color && $cartItem->options->size == $size;
+    //         });
+
+    //         if ($productAlreadyExist->isNotEmpty()) {
+    //             $cartCount = Cart::count();
+    //             $cartContent = Cart::content();
+    //             $cartSubtotal = Cart::subtotal();
+    //             return response()->json([
+    //                 'message' => $product->name . ' already in cart!', 'type' => 'error',
+    //                 'cartCount' => $cartCount,
+    //                 'cartContent' => $cartContent,
+    //                 'cartSubtotal' => $cartSubtotal,
+    //             ]);
+    //         }
+
+    //         // Add the item to the cart
+    //         Cart::add($product->id, $product->name, $quantity, $product->price, [
+    //             'image' => $product->featured_image,
+    //             'slug' => $product->slug,
+    //             'color' => $color,
+    //             'size' => $size,
+    //         ]);
+    //         $cartCount = Cart::count();
+    //         $cartContent = Cart::content();
+    //         $cartSubtotal = Cart::subtotal();
+
+    //         return response()->json([
+    //             'message' => $product->name . ' added to cart successfully', 'type' => 'success',
+    //             'cartCount' => $cartCount,
+    //             'cartContent' => $cartContent,
+    //             'cartSubtotal' => $cartSubtotal,
+    //         ]);
+    //     } else {
+    //         return response()->json(['message' => 'No Product Found', 'type' => 'error']);
+    //     }
+    // }
+
     public function addToCart(Request $request, $id)
     {
         $product = Product::find($id);
+        
 
-        if (!empty($product)) {
-            $color = $request->input('color');
-            $size = $request->input('size');
-            $quantity = $request->input('quantity');
+        if (!$product) {
+            return response()->json(['message' => 'No Product Found', 'type' => 'error']);
+        }
 
-            // Validate the inputs if necessary
+        if (!$request->input('variation') && $product->productVariations->count() > 0 ) {
+            return response()->json(['message' => 'Please choose an option', 'type' => 'error']);
+        }
 
-            // Check if the product already exists in the cart
-            $productAlreadyExist = Cart::search(function ($cartItem, $rowId) use ($product, $color, $size) {
-                return $cartItem->id == $product->id && $cartItem->options->color == $color && $cartItem->options->size == $size;
+        $variationId = $request->input('variation');  // comes from your radio buttons
+        $quantity    = $request->input('quantity');
+
+        $selectedVariation = null;
+        $finalPrice = 0;
+        $variationName = null;
+
+        // -----------------------------------------
+        // CASE 1: PRODUCT HAS VARIATION
+        // -----------------------------------------
+        if ($variationId) {
+
+            $selectedVariation = $product->productVariations->where('id', $variationId)->first();
+
+            if (!$selectedVariation) {
+                return response()->json(['message' => 'Invalid variation selected', 'type' => 'error']);
+            }
+
+            if($quantity > $selectedVariation->qty){
+                return response()->json(['message' => 'Sorry! only '. $selectedVariation->qty .' items available for this option', 'type' => 'error']);
+            }
+
+            // Price logic
+            $finalPrice = $selectedVariation->compare_price > 0
+                ? $selectedVariation->compare_price
+                : $selectedVariation->price;
+
+            $variationName = $selectedVariation->type; // save variation title
+
+            // Prevent duplicate same variation
+            $productAlreadyExist = Cart::search(function ($cartItem, $rowId) use ($product, $variationId) {
+                return $cartItem->id == $product->id && $cartItem->options->variation_id == $variationId;
             });
 
             if ($productAlreadyExist->isNotEmpty()) {
-                $cartCount = Cart::count();
-                $cartContent = Cart::content();
-                $cartSubtotal = Cart::subtotal();
                 return response()->json([
-                    'message' => $product->name . ' already in cart!', 'type' => 'error',
-                    'cartCount' => $cartCount,
-                    'cartContent' => $cartContent,
-                    'cartSubtotal' => $cartSubtotal,
+                    'message' => $product->name . ' already in cart!',
+                    'type' => 'error',
+                    'cartCount' => Cart::count(),
+                    'cartContent' => Cart::content(),
+                    'cartSubtotal' => Cart::subtotal(),
                 ]);
             }
 
-            // Add the item to the cart
-            Cart::add($product->id, $product->name, $quantity, $product->price, [
+            // Add to cart
+            Cart::add($product->id, $product->name, $quantity, $finalPrice, [
                 'image' => $product->featured_image,
                 'slug' => $product->slug,
-                'color' => $color,
-                'size' => $size,
+                'variation_id' => $variationId,
+                'variation_name' => $variationName,
+                'base_price' => $selectedVariation->price,
+                'sale_price' => $selectedVariation->compare_price,
             ]);
-            $cartCount = Cart::count();
-            $cartContent = Cart::content();
-            $cartSubtotal = Cart::subtotal();
 
-            return response()->json([
-                'message' => $product->name . ' added to cart successfully', 'type' => 'success',
-                'cartCount' => $cartCount,
-                'cartContent' => $cartContent,
-                'cartSubtotal' => $cartSubtotal,
+        } 
+        // -----------------------------------------
+        // CASE 2: NO VARIATION → NORMAL PRODUCT
+        // -----------------------------------------
+        else {
+
+            if($quantity > $product->qty){
+                return response()->json(['message' => 'Sorry! only '. $product->qty .' items available for this product', 'type' => 'error']);
+            }
+
+            $finalPrice = $product->compare_price > 0
+                ? $product->compare_price
+                : $product->price;
+
+            // Prevent duplicate normal product
+            $productAlreadyExist = Cart::search(function ($cartItem, $rowId) use ($product) {
+                return $cartItem->id == $product->id && empty($cartItem->options->variation_id);
+            });
+
+            if ($productAlreadyExist->isNotEmpty()) {
+                return response()->json([
+                    'message' => $product->name . ' already in cart!',
+                    'type' => 'error',
+                    'cartCount' => Cart::count(),
+                    'cartContent' => Cart::content(),
+                    'cartSubtotal' => Cart::subtotal(),
+                ]);
+            }
+
+            // Add product without variation
+            Cart::add($product->id, $product->name, $quantity, $finalPrice, [
+                'image' => $product->featured_image,
+                'slug' => $product->slug,
+                'variation_id' => null,
+                'variation_name' => null,
+                'base_price' => $product->price,
+                'sale_price' => $product->compare_price,
             ]);
-        } else {
-            return response()->json(['message' => 'No Product Found', 'type' => 'error']);
         }
+
+        // Final Response
+        return response()->json([
+            'message' => $product->name . ' added to cart successfully',
+            'type' => 'success',
+            'cartCount' => Cart::count(),
+            'cartContent' => Cart::content(),
+            'cartSubtotal' => Cart::subtotal(),
+        ]);
     }
+
 
     public function cart()
     {
@@ -211,7 +329,7 @@ class CartController extends Controller
     public static function processCheckout(Request $request){
 
         $admin = User::where('role', 0)->first();
-
+        $siteemail = SiteSetting::first();
         $rules=[
             'first_name' => 'required',
             'last_name' => 'required',
@@ -309,7 +427,7 @@ class CartController extends Controller
                     ];
                     // Send emails with PDF attached
                     Mail::to($request->email)->send(new OrderEmail($orderData));
-                    Mail::to($admin->email)->send(new OrderAdminEmail($orderData));
+                    Mail::to($siteemail->email)->send(new OrderAdminEmail($orderData));
 
                     Notification::send($admin, new NewOrderNotification($order));
 
@@ -378,7 +496,7 @@ class CartController extends Controller
                 ];
                 // Send emails with PDF attached
                 Mail::to($request->email)->send(new OrderEmail($orderData));
-                Mail::to($admin->email)->send(new OrderAdminEmail($orderData));
+                Mail::to($siteemail->email)->send(new OrderAdminEmail($orderData));
 
                 Notification::send($admin, new NewOrderNotification($order));
 

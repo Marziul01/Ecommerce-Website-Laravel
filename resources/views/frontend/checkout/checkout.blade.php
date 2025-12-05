@@ -233,35 +233,35 @@
                                 <h4>Your Orders</h4>
                             </div>
                             <div class="table-responsive order_table text-center">
-                                <table class="table">
+                                {{-- <table class="table">
                                     <thead>
-                                    <tr>
-                                        <th colspan="2">Product</th>
+                                    <tr >
+                                        <th>Product</th>
                                         <th>Total</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($cartContent as $item)
-                                    <tr>
-                                        <td class="image product-thumbnail"><img src="{{ asset($item->options['image']) }}" alt="#"></td>
-                                        <td>
-                                            <h5><a href="{{ route('products', $item->options['slug']) }}">{{ $item->name }}</a></h5> <span class="product-qty">x {{ $item->qty }} <br> {{ $item->options['color'] }} x {{ $item->options['size'] }}</span>
+                                    <tr >
+                                        <td class="image product-thumbnail"><img src="{{ asset($item->options['image']) }}" alt="#">
+                                        
+                                            <h5><a href="{{ route('products', $item->options['slug']) }}">{{ $item->name }}</a></h5> <span class="product-qty">x {{ $item->qty }} <br> {{ !empty($item->options['variation_id']) ? $item->options['variation_name'] : '' }}</span>
                                         </td>
                                         <td>{{ $item->price*$item->qty }}</td>
                                     </tr>
                                     @endforeach
                                     <tr>
-                                        <th>SubTotal</th>
-                                        <td class="product-subtotal" colspan="2">{{ Cart::subtotal() }}</td>
+                                        <td>SubTotal</th>
+                                        <td class="product-subtotal">{{ Cart::subtotal() }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Shipping</th>
-                                        <td colspan="2" id="shipping_charge_display"><em> 0.00</em></td>
+                                        <td>Shipping</th>
+                                        <td id="shipping_charge_display"><em> 0.00</em></td>
                                         <input type="hidden" name="shipping_charge" id="shipping_charge" value="">
                                     </tr>
                                     <tr>
-                                        <th>Discount</th>
-                                        <td colspan="2" id="discount_display"><em>@if(isset($discount))
+                                        <td>Discount</th>
+                                        <td id="discount_display"><em>@if(isset($discount))
                                                     {{$discount}} @else 0.00 @endif</em>
 
                                             <div id="">
@@ -277,12 +277,95 @@
                                         <input type="hidden" name="discount_charge" id="discount_charge" value="">
                                     </tr>
                                     <tr>
-                                        <th>Total</th>
-                                        <td colspan="2" class="product-total"><span id="total_display" class="font-xl text-brand fw-900">$0.00</span></td>
+                                        <td>Total</th>
+                                        <td class="product-total"><span id="total_display" class="font-xl text-brand fw-900">$0.00</span></td>
                                         <input type="hidden" name="subtotal" id="subtotal" value="">
                                     </tr>
                                     </tbody>
-                                </table>
+                                </table> --}}
+                                <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach($cartContent as $item)
+                                    <tr>
+                                        <th class="image product-thumbnail">
+                                            <img src="{{ asset($item->options['image']) }}" alt="#">
+                                            <div>
+                                                <h5>
+                                                    <a href="{{ route('products', $item->options['slug']) }}">
+                                                        {{ $item->name }}
+                                                    </a>
+                                                </h5>
+
+                                                <span class="product-qty">
+                                                    x {{ $item->qty }} <br>
+                                                    {{ !empty($item->options['variation_id']) ? $item->options['variation_name'] : '' }}
+                                                </span>
+                                            </div>
+                                        </th>
+
+                                        <td>{{ $item->price * $item->qty }} BDT</td>
+                                    </tr>
+                                    @endforeach
+
+
+                                    <!-- Subtotal -->
+                                    <tr>
+                                        <th>SubTotal</th>
+                                        <td class="product-subtotal">{{ Cart::subtotal() }} BDT</td>
+                                    </tr>
+
+                                    <!-- Shipping -->
+                                    <tr>
+                                        <th>Shipping</th>
+                                        <td>
+                                            <em id="shipping_charge_display">0.00 BDT</em>
+                                            <input type="hidden" name="shipping_charge" id="shipping_charge" value="">
+                                        </td>
+                                    </tr>
+
+                                    <!-- Discount -->
+                                    <tr>
+                                        <th>Discount</th>
+                                        <td>
+                                            <em id="discount_display">
+                                                @if(isset($discount)) {{ $discount }} BDT @else 0.00 BDT @endif
+                                            </em>
+
+                                            @if(Session::has('code'))
+                                                <div class="d-flex justify-content-center align-items-center" id="remove_coupon_div">
+                                                    <p style="font-size: 12px">
+                                                        COUPON: <strong>{{ Session::get('code')->code }}</strong>
+                                                    </p>
+                                                    <button class="btn btn-sm btn-danger" id="removeCoupon" style="padding: 0px 2px !important; margin-left: 5px">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            @endif
+
+                                            <input type="hidden" name="discount_charge" id="discount_charge" value="">
+                                        </td>
+                                    </tr>
+
+                                    <!-- Total -->
+                                    <tr>
+                                        <th>Total</th>
+                                        <td class="product-total">
+                                            <span id="total_display" class="font-xl text-brand fw-900">0.00 BDT</span>
+                                            <input type="hidden" name="subtotal" id="subtotal" value="">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
                             </div>
                             <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                             <div class="payment_method">

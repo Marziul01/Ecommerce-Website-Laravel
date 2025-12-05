@@ -44,6 +44,8 @@ class  Brand extends Model
 
         $successMessage = "Brand has been " . self::$action . " successfully";
         $request->session()->flash('success', $successMessage);
+
+        return self::$brand ;
     }
 
     public static function makeSlug($request){

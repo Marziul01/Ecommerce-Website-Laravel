@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\SiteSetting;
 use App\Models\SubCategory;
@@ -17,6 +18,9 @@ class SubCategoryController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->category == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.sub_category.manage',[
             'admin' => Auth::guard('admin')->user(),
             'categories' =>  Category::where('status',1)->get(),
@@ -38,6 +42,9 @@ class SubCategoryController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'category_id' => 'required',
             'name' => 'required',
@@ -45,7 +52,13 @@ class SubCategoryController extends Controller
         ]);
         if ($validator->passes()){
 
-            SubCategory::saveInfo($request);
+            $subcategory = SubCategory::saveInfo($request);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A new sub category created .';
+            $notification->notification_for = 'Sub Category';
+            $notification->item_id = $subcategory->id;
+            $notification->save();
             return redirect(route('subcategory.index'));
 
         }else{
@@ -75,6 +88,9 @@ class SubCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $subcategory = SubCategory::find($id);
 
         $validator = Validator::make($request->all(), [
@@ -84,6 +100,12 @@ class SubCategoryController extends Controller
         if ($validator->passes()){
 
             SubCategory::saveInfo($request,$id);
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A sub category updated .';
+            $notification->notification_for = 'Sub Category';
+            $notification->item_id = $subcategory->id;
+            $notification->save();
             return redirect(route('subcategory.index'));
 
         }else{
@@ -96,6 +118,9 @@ class SubCategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $subcategory = SubCategory::find($id);
 
         if ($subcategory) {
@@ -116,7 +141,12 @@ class SubCategoryController extends Controller
             }
 
         }
-
+        $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A sub category deleted .';
+            $notification->notification_for = 'Sub Category';
+            $notification->item_id = $subcategory->id;
+            $notification->save();
         return redirect(route('subcategory.index'));
     }
 

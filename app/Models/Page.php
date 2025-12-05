@@ -28,6 +28,8 @@ class Page extends Model
 
         self::$setting->save();
         $request->session()->flash('success', 'Page settings has been saved successfully');
+
+        return self::$setting;
     }
 
     public static function saveImage($request){

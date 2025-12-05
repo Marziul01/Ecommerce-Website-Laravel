@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Category;
 use App\Models\SiteSetting;
 use App\Models\SubCategory;
@@ -17,6 +18,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        if(Auth::guard('admin')->user()->access->category == 2){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied! You do not have permission to access this page.');
+        }
         return view('admin.category.manage',[
             'admin' => Auth::guard('admin')->user(),
             'categories' =>  Category::latest()->paginate(10),
@@ -37,13 +41,24 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'slug' => 'required | unique:categories',
         ]);
         if ($validator->passes()){
 
-            Category::saveInfo($request);
+            $category = Category::saveInfo($request);
+
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A new category created .';
+            $notification->notification_for = 'Category';
+            $notification->item_id = $category->id;
+            $notification->save();
+
             return redirect(route('category.index'));
 
         }else{
@@ -74,6 +89,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $category = Category::find($id);
 
         $validator = Validator::make($request->all(), [
@@ -83,6 +101,14 @@ class CategoryController extends Controller
         if ($validator->passes()){
 
             Category::saveInfo($request,$id);
+
+            $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A category updated.';
+            $notification->notification_for = 'Category';
+            $notification->item_id = $category->id;
+            $notification->save();
+
             return redirect(route('category.index'));
 
         }else{
@@ -96,7 +122,9 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-
+        if(Auth::guard('admin')->user()->access->category != 3){
+            return redirect(route('admin.dashboard'))->with('error', 'Access Denied!');
+        }
         $category = Category::find($id);
 
         if ($category) {
@@ -109,7 +137,7 @@ class CategoryController extends Controller
                     // Delete the image file
                     unlink($imagePath);
                 }
-
+                
                 // Delete the SubCategory record
                 $category->delete();
             }else{
@@ -117,6 +145,13 @@ class CategoryController extends Controller
             }
 
         }
+
+        $notification = new AdminNotification();
+            $notification->admin_id = auth()->id();
+            $notification->message = 'A category deleted.';
+            $notification->notification_for = 'Category';
+            $notification->item_id = $category->id;
+            $notification->save();
 
         return redirect(route('category.index'));
     }

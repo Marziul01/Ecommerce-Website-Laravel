@@ -26,9 +26,11 @@
                         <textarea id="editor" name="content" class="form-control">{!! $about->content !!}</textarea>
                     </div>
                 </div>
+                @if (Auth::guard('admin')->user()->access->pages_manage == 3)
                 <div class="col-md-12">
                     <button class="btn btn-primary" type="submit"> Save Settings </button>
                 </div>
+                @endif
             </div>
         </form>
     </section>
