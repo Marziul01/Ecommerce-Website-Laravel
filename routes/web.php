@@ -65,6 +65,7 @@ Route::post('/contact-form', [PageController::class ,'contactForm'])->name('cont
 Route::post('submitReview',[RatingController::class,'submitReview'])->name('submitReview');
 Route::get('/category/{slug}/{categorySlug?}/{subCategorySlug?}', [CategoryProductController::class ,'categoryProduct'])->name('categoryProduct');
 Route::get('/sub_category/{slug}/{categorySlug?}/{subCategorySlug?}', [CategoryProductController::class ,'subCategoryProduct'])->name('subCategoryProduct');
+Route::get('/load-more-products', [HomeController::class, 'loadMoreProducts'])->name('load-more-products');
 
 
 Route::group(['prefix' => 'account'],function(){

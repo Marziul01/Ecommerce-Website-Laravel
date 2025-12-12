@@ -1,7 +1,7 @@
 @extends('frontend.master')
 
 @section('title')
-    {{ $siteSettings->title }} | About Us
+    About Us
 @endsection
 
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 class Category extends Model
 {
     use HasFactory;
+
     private static $category,$image,$imageUrl, $imageNewName,$dir,$slug,$action;
 
     public static function saveInfo($request, $id=null){
@@ -73,6 +74,7 @@ class Category extends Model
         }
 
         self::$category->save();
+        
     }
 
     public function sub_category(){
@@ -84,3 +86,6 @@ class Category extends Model
     }
 
 }
+
+
+

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    public static function index(){
+    public static function index(Request $request){
 
         $category1 = HomeSetting::find(4);
         $category1product = $category1->firstCategory;
@@ -42,6 +42,13 @@ class HomeController extends Controller
             ->take(8) // Get top 8 most ordered products
             ->get();
 
+        
+
+        $products = Product::where('status', 1)
+        ->orderBy('id', 'desc')
+        ->take(20) // first 20 products
+        ->get();
+
         return view('frontend.home.home',[
             'siteSettings' => SiteSetting::where('id', 1)->first(),
             'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
@@ -65,10 +72,31 @@ class HomeController extends Controller
             'category3products' => $category3products,
             'Products' => Product::where('status', 1)->with('productGallery')->get(),
             'cartContent' => Cart::content(),
-            'products' => Product::where('status', 1 )->get(),
+            'products' => $products,
             'userId' => $userId,
             'mostOrderedProducts' => $mostOrderedProducts,
             'sliders' => Slider::all(),
         ]);
     }
+
+    public function loadMoreProducts(Request $request)
+    {
+        $page = $request->page ?? 1;
+        $limit = 20;
+
+        $products = Product::where('status', 1)
+            ->orderBy('id', 'desc')
+            ->skip(($page - 1) * $limit)
+            ->take($limit)
+            ->get();
+
+        $html = view('frontend.products.product_loop', compact('products'))->render();
+
+        return response()->json([
+            'html'    => $html,
+            'hasMore' => $products->count() == $limit
+        ]);
+    }
+
+
 }

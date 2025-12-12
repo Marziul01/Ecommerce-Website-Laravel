@@ -1,13 +1,7 @@
 @extends('frontend.master')
 
 @section('title')
-    {{ $siteSettings->title }} | Shop
-@endsection
-
-@section('modals')
-
-    @include('frontend.include.quickview', ['products' => $products])
-
+    Shop
 @endsection
 
 @section('content')
