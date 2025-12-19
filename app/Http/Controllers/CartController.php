@@ -132,13 +132,13 @@ class CartController extends Controller
                     'type' => 'error',
                     'cartCount' => Cart::count(),
                     'cartContent' => Cart::content(),
-                    'cartSubtotal' => Cart::subtotal(),
+                    'cartSubtotal' => Cart::count() ? Cart::subtotal() : 0,
                 ]);
             }
 
             // Add to cart
             Cart::add($product->id, $product->name, $quantity, $finalPrice, [
-                'image' => $product->featured_image,
+                'image' => asset($product->featured_image),
                 'slug' => $product->slug,
                 'variation_id' => $variationId,
                 'variation_name' => $variationName,
@@ -171,7 +171,7 @@ class CartController extends Controller
                     'type' => 'error',
                     'cartCount' => Cart::count(),
                     'cartContent' => Cart::content(),
-                    'cartSubtotal' => Cart::subtotal(),
+                    'cartSubtotal' => Cart::count() ? Cart::subtotal() : 0,
                 ]);
             }
 
@@ -192,7 +192,7 @@ class CartController extends Controller
             'type' => 'success',
             'cartCount' => Cart::count(),
             'cartContent' => Cart::content(),
-            'cartSubtotal' => Cart::subtotal(),
+            'cartSubtotal' => Cart::count() ? Cart::subtotal() : 0,
         ]);
     }
 
@@ -208,45 +208,50 @@ class CartController extends Controller
 
     public function updateCart(Request $request)
     {
-        try {
-            $quantities = $request->input('quantity');
+        $request->validate([
+            'rowId' => 'required',
+            'qty'   => 'required|integer|min:1'
+        ]);
 
-            foreach ($quantities as $rowId => $quantity) {
-                // Ensure $rowId exists in the cart before attempting to update
-                if (!Cart::get($rowId)) {
-                    throw new \Exception("Item not found in the cart.");
-                }
-
-                // Update the cart
-                Cart::update($rowId, $quantity);
-            }
-
-            return redirect()->back()->with('success', 'Cart updated successfully');
-        } catch (\Exception $e) {
-            \Log::error("Error updating cart: " . $e->getMessage());
-
-            return redirect()->back()->with('error', 'An error occurred while updating the cart.');
+        if (!Cart::get($request->rowId)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Cart item not found'
+            ]);
         }
+
+        Cart::update($request->rowId, $request->qty);
+
+        return response()->json([
+            'type'          => 'success',
+            'message'       => 'Cart updated',
+            'cartContent'   => Cart::content(),
+            'cartSubtotal' => Cart::count() ? Cart::subtotal() : 0,
+            'cartCount'     => Cart::count()
+        ]);
     }
 
-    public function removeFromCart($rowId)
+
+    public function removeFromCart(Request $request)
     {
-        try {
-            // Ensure $rowId exists in the cart before attempting to remove
-            if (!Cart::get($rowId)) {
-                throw new \Exception("Item not found in the cart.");
-            }
-
-            // Remove the item from the cart
-            Cart::remove($rowId);
-
-            return redirect()->back();
-        } catch (\Exception $e) {
-            \Log::error("Error removing product from cart: " . $e->getMessage());
-
-            return redirect()->back()->with('error', 'An error occurred while removing the product from the cart.');
+        if (!Cart::get($request->rowId)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Cart item not found'
+            ]);
         }
+
+        Cart::remove($request->rowId);
+
+        return response()->json([
+            'type'          => 'success',
+            'message'       => 'Item removed',
+            'cartContent'   => Cart::content(),
+            'cartSubtotal' => Cart::count() ? Cart::subtotal() : 0,
+            'cartCount'     => Cart::count()
+        ]);
     }
+
 
     public function clearCart()
     {
@@ -276,7 +281,7 @@ class CartController extends Controller
     }
 
     public function checkout(){
-
+        return redirect(route('home'));
         if (Auth::check()){
             $userInfo  = Userinfo::where('user_id', Auth::user()->id)->first();
         }else{
@@ -327,12 +332,16 @@ class CartController extends Controller
     }
 
     public static function processCheckout(Request $request){
-
+        if (Cart::count() === 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Your cart is empty. Please add items before checkout.'
+            ], 200);
+        }
         $admin = User::where('role', 0)->first();
         $siteemail = SiteSetting::first();
         $rules=[
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'name' => 'required',
             'phone' => 'required',
             'country' => 'required',
             'billing_address' => 'required',
@@ -343,8 +352,6 @@ class CartController extends Controller
         if (!empty($request->create_account) && $request->create_account == 'Yes'){
             $rules['password'] = 'required|min:8';
             $rules['email'] = 'required|unique:users';
-        }else{
-            $rules['email'] = 'required';
         }
 
         if (!empty($request->shipping) && $request->shipping == 'Yes'){
@@ -356,6 +363,7 @@ class CartController extends Controller
             $rules['shipping_state'] = 'required';
         }
         
+
 
         $validator = Validator::make($request->all(),$rules);
         $paymentType = PaymentMethod::find($request->payment_option);
@@ -426,7 +434,10 @@ class CartController extends Controller
                         'order' => $order,
                     ];
                     // Send emails with PDF attached
-                    Mail::to($request->email)->send(new OrderEmail($orderData));
+                    if($request->email){
+                        Mail::to($request->email)->send(new OrderEmail($orderData));
+                    }
+                    
                     Mail::to($siteemail->email)->send(new OrderAdminEmail($orderData));
 
                     Notification::send($admin, new NewOrderNotification($order));
@@ -438,11 +449,6 @@ class CartController extends Controller
                     ]);
 
                 }else{
-                    // return response()->json([
-                    //     'status' => 'error',
-                    //     'message' => "Your coupon's maximum uses exceeded"
-                    // ]);
-
                     return response()->json([
                         'status' => 'error',
                         'message' => "Your coupon's maximum uses exceeded",
@@ -495,7 +501,10 @@ class CartController extends Controller
                     'order' => $order,
                 ];
                 // Send emails with PDF attached
-                Mail::to($request->email)->send(new OrderEmail($orderData));
+                if($request->email){
+                    Mail::to($request->email)->send(new OrderEmail($orderData));
+                }
+                
                 Mail::to($siteemail->email)->send(new OrderAdminEmail($orderData));
 
                 Notification::send($admin, new NewOrderNotification($order));
@@ -647,6 +656,9 @@ class CartController extends Controller
 
     public static function thankYou($order){
         $order = Order::where('order_number', $order)->first();
+        if(!$order){
+            return redirect(route('home'))->with('error' , 'Invalid Order Number');
+        }
         return view('frontend.checkout.thankYou',[
             'siteSettings' => SiteSetting::where('id', 1)->first(),
             'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
@@ -656,3 +668,4 @@ class CartController extends Controller
     }
 
 }
+ 

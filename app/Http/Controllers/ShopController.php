@@ -85,13 +85,7 @@ class ShopController extends Controller
         }
 
         if (!empty($request->get('search'))){
-
-            if ($request->get('category') == 'all_category'){
-                $products = Product::where('name', 'like', '%'. $request->get('search') .'%')->paginate(12);
-            }else{
-                $category = Category::where('slug', $request->get('category'))->first();
-                $products = Product::where('category_id', $category->id)->where('name', 'like', '%'. $request->get('search') .'%')->paginate(12);
-            }
+            $products = Product::where('name', 'like', '%'. $request->get('search') .'%')->paginate(12);
         }
 
 

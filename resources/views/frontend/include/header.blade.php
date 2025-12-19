@@ -1,246 +1,3 @@
-{{-- <header class="header-area header-style-1 header-height-2">
-    <div class="header-top header-top-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info">
-                        <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="tel:{{ $siteSettings->phone }}">{{ $siteSettings->phone }}</a></li>
-                            <li><i class="fi-rs-marker"></i><a  href="{{ $siteSettings->locationLink }}">Our location</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-4">
-                    <div class="text-center">
-                        <div id="news-flash" class="d-inline-block">
-                            <ul>
-                                @if ($siteSettings->offerOne)
-                                <li>{{ $siteSettings->offerOne }} <a href="{{ $siteSettings->offerOneLink }}">View details</a></li>
-                                @endif 
-                                @if ($siteSettings->offerTwo)
-                                <li>{{ $siteSettings->offerTwo }} <a href="{{ $siteSettings->offerTwoLink }}">Shop now</a></li>
-                                @endif 
-                                
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info header-info-right">
-                        <ul>
-                            
-                            @if(Auth::check())
-                                <li class="dropdown">
-                                    <i class="fi-rs-user"></i>
-                                    <p style="font-size: 13px; color: black; margin-bottom: 0px;" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Welcome, {{ Auth::user()->name }}!</p>
-                                    <ul class="dropdown-menu px-2 py-2" style="background: #fff;font-size: 13px;border-radius: 0px;">
-                                        <li style="padding: 0px"><a class="dropdown-item" href="{{ route('user.profile') }}" style="color: black;padding-left: 10px">Profile</a></li>
-                                        <li style="padding: 0px"><a class="dropdown-item" href="{{ route('user.logout') }}" style="color: black;padding-left: 10px">Logout</a></li>
-                                    </ul>
-                                </li>
-                            @else
-                                <li><i class="fi-rs-user"></i><a href="{{ route('userAuth') }}">Log In / Sign Up</a></li>
-                            @endif
-
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="header-wrap">
-                <div class="logo logo-width-1">
-                    <a href="{{ route('home') }}"><img src="{{ asset($siteSettings->logo) }}" alt="logo"></a>
-                </div>
-                <div class="header-right">
-                    <div class="search-style-2">
-                        <form action="{{ route('shop') }}" method="get">
-                            <select class="select-active" name="category" id="search_category">
-                                <option value="all_category">All Categories</option>
-                                @if($categories->isNotEmpty())
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->slug }}">{{ $category->name }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                            <input type="text" placeholder="Search for items..." name="search" value="{{ Request::get('search') }}" id="search">
-                        </form>
-                    </div>
-                    <div class="header-action-right">
-                        <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="{{ route('wishlist') }}">
-                                    <img class="svgInject" alt="Evara" src="{{ asset('frontend-assets') }}/imgs/theme/icons/icon-heart.svg">
-                                    <span id="wishlist-count-now" class="pro-count blue">{{ Auth::check() ? Auth::user()->wishlist()->count() : count(session()->get('wishlist', [])) }}</span>
-                                </a>
-
-                            </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="{{ route('cart') }}">
-                                    <img alt="Evara" src="{{ asset('frontend-assets') }}/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue" id="cartCount">{{ Cart::count() }}</span>
-                                </a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2" id="cartDropdown">
-                                    <ul>
-                                        @foreach($cartContent as $item)
-                                            <li>
-                                                <div class="shopping-cart-img">
-                                                    <a href="{{ route('products', $item->options['slug']) }}">
-                                                        <img alt="{{ $item->name }}" src="{{ asset($item->options['image']) }}">
-                                                    </a>
-                                                </div>
-                                                <div class="shopping-cart-title">
-                                                    <h4><a href="{{ route('products', $item->options['slug']) }}">{{ $item->name }}</a></h4>
-                                                    <h4><span>{{ $item->qty }} × </span>{{ $item->price }} BDT</h4>
-                                                </div>
-                                                <div class="shopping-cart-delete">
-                                                    <a href="{{ route('removeFromCart', $item->rowId) }}"><i class="fi-rs-cross-small"></i></a>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span>{{ Cart::subtotal() }} BDT</span></h4>
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                            <a href="{{ route('cart') }}" class="outline">View cart</a>
-                                            <a href="{{ route('checkout') }}">Checkout</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-bottom header-bottom-bg-color sticky-bar">
-        <div class="container">
-            <div class="header-wrap header-space-between position-relative">
-                <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="{{ route('home') }}"><img src="{{ asset($siteSettings->logo) }}" alt="logo"></a>
-                </div>
-                <div class="header-nav d-none d-lg-flex">
-                    <div class="main-categori-wrap d-none d-lg-block">
-                        <a class="categori-button-active" href="#">
-                            <span class="fi-rs-apps"></span> Browse Categories
-                        </a>
-                        <div class="categori-dropdown-wrap categori-dropdown-active-large">
-                            <ul>
-                                @if($categories->isNotEmpty())
-                                    @foreach($categories as $category)
-                                        <li @if($category->sub_category->isNotEmpty()) class="has-children" @endif>
-                                            <a href="{{ route('categoryProduct',$category->slug) }}">{{ $category->name }}</a>
-                                            @if($category->sub_category->isNotEmpty())
-
-                                            <div class="dropdown-menu">
-                                                <ul class="">
-                                                    @foreach($category->sub_category as $subCategory)
-                                                        <li><a href="{{ route('subCategoryProduct',$subCategory->slug) }}">{{ $subCategory->name }}</a></li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                @endif
-
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
-                        <nav>
-                            <ul>
-                                <li>
-                                    <a class="active" href="{{ route('home') }}">Home</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('about') }}">About us</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('shop') }}">Shop</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('contact') }}">Contact us</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> {{ $siteSettings->hotline }} </p>
-                </div>
-                <p class="mobile-promotion">Happy <span class="text-brand">Mother's Day</span>. Big Sale Up to 40%</p>
-                <div class="header-action-right d-block d-lg-none">
-                    <div class="header-action-2">
-                        <div class="header-action-icon-2">
-                            <a href="{{ route('wishlist') }}">
-                                <img alt="Evara" src="{{ asset('frontend-assets') }}/imgs/theme/icons/icon-heart.svg">
-                                <span class="pro-count white" id="wishlist-count-now-mobile">{{ Auth::check() ? Auth::user()->wishlist()->count() : count(session()->get('wishlist', [])) }}</span>
-                            </a>
-                        </div>
-                        <div class="header-action-icon-2">
-                            <a class="mini-cart-icon" href="{{ route('cart') }}">
-                                <img alt="Evara" src="{{ asset('frontend-assets') }}/imgs/theme/icons/icon-cart.svg">
-                                <span class="pro-count white" id="cartCountMobile">{{ Cart::count() }}</span>
-                            </a>
-                            <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                <ul>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Evara" src="{{ asset('frontend-assets') }}/imgs/shop/thumbnail-3.jpg"></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                            <h3><span>1 × </span>$800.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Evara" src="{{ asset('frontend-assets') }}/imgs/shop/thumbnail-4.jpg"></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Macbook Pro 2022</a></h4>
-                                            <h3><span>1 × </span>$3500.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="shopping-cart-footer">
-                                    <div class="shopping-cart-total">
-                                        <h4>Total <span>$383.00</span></h4>
-                                    </div>
-                                    <div class="shopping-cart-button">
-                                        <a href="shop-cart.html">View cart</a>
-                                        <a href="shop-checkout.html">Checkout</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="header-action-icon-2 d-block d-lg-none">
-                            <div class="burger-icon burger-icon-white">
-                                <span class="burger-icon-top"></span>
-                                <span class="burger-icon-mid"></span>
-                                <span class="burger-icon-bottom"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</header> --}}
 
     <div id="shopify-section-sections--17326543765726__annoucement" class="shopify-section shopify-section-group-header-group">
         <section class="announcement-bar">
@@ -286,6 +43,7 @@
 
                     <div class="w-1/4 flex flex-1 items-center justify-end sf-header__mobile-right">
                         <m-search-popup class="flex justify-center items-center p-2" data-open-search-popup>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#searchModal">
                             <span class="sf__search-mb-icon">
                                 <svg class="w-[20px] h-[20px]" fill="currentColor" stroke="currentColor"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -293,11 +51,10 @@
                                         d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z" />
                                 </svg>
                             </span>
+                            </button>
                         </m-search-popup>
 
-                        <a href=""
-                            class="relative py-2 px-2 whitespace-nowrap cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble"
-                            id="m-cart-icon-bubble">
+                        <a href="javascript:void(0)" class="relative py-2 px-2 cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble openCartBtn">
                             <span class="sf__tooltip-item block sf__tooltip-bottom sf__tooltip-style-2">
                                 <svg class="w-[20px] h-[20px]" fill="currentColor" stroke="currentColor"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -306,7 +63,9 @@
                                 </svg>
                                 <span class="sf__tooltip-content">Cart</span>
                             </span>
-                            <span class="m-cart-count-bubble sf-cart-count font-medium hidden">0</span>
+                            <span class="m-cart-count-bubble sf-cart-count font-medium {{ $cartCount > 0 ? '' : 'hidden' }}">
+                                    {{ $cartCount }}
+                            </span>
                         </a>
                     </div>
                     
@@ -380,7 +139,7 @@
 
                                 <m-search-popup class="sf-search-form flex items-center pr-4  " data-open-search-popup>
 
-                                    <button class="flex items-center py-2 px-3">
+                                    <button class="flex items-center py-2 px-3" data-bs-toggle="modal" data-bs-target="#searchModal">
                                         <span class="sf__tooltip-item block sf__tooltip-bottom sf__tooltip-style-2">
                                             <svg class="w-[18px] h-[18px]" fill="currentColor" stroke="currentColor"
                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -434,9 +193,7 @@
 
 
 
-                                <a href=""
-                                    class="relative py-2 px-2 whitespace-nowrap cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble"
-                                    id="m-cart-icon-bubble">
+                                <a href="javascript:void(0)" class="relative py-2 px-2 cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble openCartBtn">
                                     <span class="sf__tooltip-item block sf__tooltip-bottom sf__tooltip-style-2">
                                         <svg class="w-[20px] h-[20px]" fill="currentColor" stroke="currentColor"
                                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -445,7 +202,9 @@
                                         </svg>
                                         <span class="sf__tooltip-content">Cart</span>
                                     </span>
-                                    <span class="m-cart-count-bubble sf-cart-count font-medium hidden">0</span>
+                                    <span class="m-cart-count-bubble sf-cart-count font-medium {{ $cartCount > 0 ? '' : 'hidden' }}">
+                                        {{ $cartCount }}
+                                    </span>
                                 </a>
 
                             </div>
@@ -453,244 +212,7 @@
                     </div>
                     <div class="sf__header-main-menu bg-color-menubar-background text-color-menubar relative">
                         <div class="-mx-4 flex justify-center items-center sf-no-scroll-bar sf-menu-wrapper__desktop">
-                            {{-- <ul
-                                class="sf-nav flex flex-wrap text-base font-medium whitespace-nowrap sf-no-scroll-bar ">
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="0">
-                                    <a href="collections/offer.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        OFFER ZONE
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="1">
-                                    <a href="collections/best-seller.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Best Seller
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="2">
-                                    <a href="collections/oil-1.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Oil
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="3">
-                                    <a href="collections/ghee.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Ghee (ঘি)
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="4">
-                                    <a href="collections/dates.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Dates (খেজুর)
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="5">
-                                    <a href="collections/khejur-gurr.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        খেজুর গুড়
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="6">
-                                    <a href="collections/honey.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Honey
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="7">
-                                    <a href="collections/masala.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Masala
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="8">
-                                    <a href="collections/nuts-amp-seeds.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Nuts & Seeds
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="9">
-                                    <a href="collections/tea-coffee.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Tea/Coffee
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="10">
-                                    <a href="collections/natural-honeycomb.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Honeycomb
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="11">
-                                    <a href="collections/gb-organic-products.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Organic Zone
-
-                                    </a>
-
-                                </li>
-
-
-
-
-
-
-
-
-
-                                <li class="sf-menu-item list-none sf-menu-item--no-mega sf-menu-item-parent"
-                                    data-index="12">
-                                    <a href="collections/pickle.html"
-                                        class="block px-4 py-5 flex items-center sf__parent-item">
-                                        Pickle
-
-                                    </a>
-
-                                </li>
-
-
-
-                            </ul> --}}
+                            
                             <ul class="d-flex m-menu-drawer__navigation m-menu-mobile">
                                     @if ($categories->isNotEmpty())
                                     @foreach ($categories as $category)
@@ -745,9 +267,7 @@
 
 
 
-                            <a href="cart.html"
-                                class="relative py-2 px-2 whitespace-nowrap cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble"
-                                id="m-cart-icon-bubble">
+                            <a href="javascript:void(0)" class="relative py-2 px-2 cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble openCartBtn">
                                 <span class="sf__tooltip-item block sf__tooltip-bottom sf__tooltip-style-2">
                                     <svg class="w-[20px] h-[20px]" fill="currentColor" stroke="currentColor"
                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -756,7 +276,9 @@
                                     </svg>
                                     <span class="sf__tooltip-content">Cart</span>
                                 </span>
-                                <span class="m-cart-count-bubble sf-cart-count font-medium hidden">0</span>
+                                <span class="m-cart-count-bubble sf-cart-count font-medium {{ $cartCount > 0 ? '' : 'hidden' }}">
+                                    {{ $cartCount }}
+                                </span>
                             </a>
 
                         </div>
@@ -766,29 +288,34 @@
             </div>
         </section>
     </div>
-<script>
-    $(document).ready(function () {
-        // Attach hover event to the mini-cart-icon
-        $('.mini-cart-icon').hover(function () {
-            // Fetch cart details and update the dropdown content
-            updateCartDropdown();
-        });
-    });
 
-    function updateCartDropdown() {
-        // Make an AJAX request to fetch cart details
-        $.ajax({
-            url: "{{ route('getCartDetails') }}", // Update this route to your actual route
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                // Update the cart dropdown content with fetched data
-                $('#cartDropdown').html(data.cartHtml);
-            },
-            error: function (error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-</script>
-@include('frontend.include.mobilenav')
+
+    <div class="modal fade search-modal" id="searchModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content border-0 rounded-0">
+
+                <div class="modal-body p-3">
+                    <form action="{{ route('shop') }}" method="get" class="d-flex align-items-center gap-2">
+
+                        <input type="text"
+                            class="form-control m-0"
+                            placeholder="Search for items..."
+                            name="search"
+                            value="{{ Request::get('search') }}"
+                            id="search"
+                            autofocus>
+
+                        <button type="submit" class="btn btn-dark d-flex align-items-center gap-1 px-2">
+                            <svg class="w-[18px] h-[18px]" fill="currentColor" stroke="currentColor"
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                <path
+                                                    d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z" />
+                                            </svg>
+                        </button>
+                        <button type="button" class=" btn btn-danger btn-close px-2 text-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>

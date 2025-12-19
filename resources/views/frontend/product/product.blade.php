@@ -4,12 +4,6 @@
     {{ $siteSettings->title }} | {{ $product->slug }}
 @endsection
 
-@section('modals')
-
-    @include('frontend.include.quickview', ['products' => $products])
-
-@endsection
-
 @section('content')
     <div class="page-header breadcrumb-wrap">
         <div class="container">
@@ -63,7 +57,7 @@
                                     <h2 class="title-detail">{{ $product->name }}</h2>
                                     <div class="product-detail-rating">
                                         <div class="pro-details-brand">
-                                            <span> Brands: <a href="shop-grid-right.html">{{ $product->brand->name }}</a></span>
+                                            <span> Brands: <a href="">{{ $product->brand->name }}</a></span>
                                         </div>
                                         <div class="product-rate-cover text-end">
                                             <div class="product-rate d-inline-block">
@@ -73,152 +67,120 @@
                                             <span class="font-small ml-5 text-muted"> ({{$product->ratings->where('status',1)->count()}} reviews)</span>
                                         </div>
                                     </div>
-                                    <div class="clearfix product-price-cover">
-                                        {{-- <div class="product-price primary-color float-left">
-                                            <ins><span class="text-brand">${{ $product->price }}</span></ins>
-                                            @if(isset($product->compare_price))
-                                            <ins><span class="old-price font-md ml-15">{{ $product->compare_price }}</span></ins>
-                                            <span class="save-price  font-md color3 ml-15">{{ round((($product->compare_price - $product->price) / $product->compare_price) * 100) }}% Off</span>
-                                            @endif
-                                        </div> --}}
-                                        <div id="priceArea">
+                                    <div class="sf-column product-card">
+                                        <div class="sf__pcard sf__pcard--onsale cursor-pointer sf-prod__block sf__pcard-style-4" data-view="card"
+                                            data-product-id="8766631903454">
+                                            <div class="text-left">
+                                                <div class="mt-3 lg:mt-5">
+                                                    <div class="sf__pcard-price leading-normal">
+                                                        <div class="f-price inline-flex justify-content-start flex-wrap f-price--on-sale text-left">
+                                                        
+                                                            @if ($product->productVariations->count() > 0)
+                                                                @php
+                                                                    $variations = $product->productVariations;
 
-                                            @if ($product->productVariations->count() > 0)
+                                                                    // Calculate selling price for each variation
+                                                                    $sellingPrices = $variations->map(function ($v) {
+                                                                        return $v->compare_price && $v->compare_price > 0
+                                                                            ? $v->compare_price
+                                                                            : $v->price;
+                                                                    });
 
-                                                @php
-                                                    $variations = $product->productVariations;
+                                                                    $minSelling = $sellingPrices->min();
+                                                                    $maxSelling = $sellingPrices->max();
 
-                                                    $sellingPrices = $variations->map(fn($v) =>
-                                                        $v->compare_price > 0 ? $v->compare_price : $v->price
-                                                    );
+                                                                    // Check if ANY variation has compare_price
+                                                                    $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
 
-                                                    $minSelling = $sellingPrices->min();
-                                                    $maxSelling = $sellingPrices->max();
+                                                                    // For showing crossed price, we still need original ranges
+                                                                    $minOriginal = $variations->min('price');
+                                                                    $maxOriginal = $variations->max('price');
+                                                                @endphp
 
-                                                    $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
-
-                                                    $minOriginal = $variations->min('price');
-                                                    $maxOriginal = $variations->max('price');
-                                                @endphp
-
-                                                @if ($hasSale)
-                                                    <div class="text-muted text-decoration-line-through">
-                                                        {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
+                                                                {{-- IF THERE ARE SALE PRICES --}}
+                                                                @if ($hasSale)
+                                                                    <div class="sf__pcard-tags absolute flex flex-wrap">
+                                                                        <span
+                                                                            class="py-0.5 px-2 mb-2 mr-2 font-medium rounded-xl text-white prod__tag prod__tag-sale">On
+                                                                            Sale </span>
+                                                                    </div>
+                                                                    <span class="text-muted text-decoration-line-through  originalPrice">
+                                                                        {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }}
+                                                                    </span>
+                                                                    
+                                                                    <span class="fw-bold  sellingPrice">
+                                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                                    </span>
+                                                                @else
+                                                                    <span class="fw-bold sellingPrice">
+                                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                                    </span>
+                                                                @endif
+                                                            @else
+                                                                {{-- NO VARIATIONS --}}
+                                                                @if ($product->compare_price && $product->compare_price > 0)
+                                                                    <div class="sf__pcard-tags absolute flex flex-wrap">
+                                                                        <span
+                                                                            class="py-0.5 px-2 mb-2 mr-2 font-medium rounded-xl text-white prod__tag prod__tag-sale">On
+                                                                            Sale </span>
+                                                                    </div>
+                                                                    <span class="text-muted text-decoration-line-through  originalPrice">
+                                                                        {{ number_format($product->price) }}
+                                                                    </span>
+                                                                    
+                                                                    <span class="fw-bold  sellingPrice">
+                                                                        {{ number_format($product->compare_price) }} BDT
+                                                                    </span>
+                                                                @else
+                                                                    <span class="fw-bold  sellingPrice">
+                                                                        {{ number_format($product->price) }} BDT
+                                                                    </span>
+                                                                @endif
+                                                            @endif
+                                                        </div>
                                                     </div>
-
-                                                    <div class="fw-bold fs-5">
-                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
-                                                    </div>
-
-                                                @else
-                                                    <div class="fw-bold fs-5">
-                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
-                                                    </div>
-                                                @endif
-
-                                            @else
-                                                @if ($product->compare_price > 0)
-                                                    <div class="text-muted text-decoration-line-through">
-                                                        {{ number_format($product->price) }} BDT
-                                                    </div>
-                                                    <div class="fw-bold fs-4">
-                                                        {{ number_format($product->compare_price) }} BDT
-                                                    </div>
-                                                @else
-                                                    <div class="fw-bold fs-4">
-                                                        {{ number_format($product->price) }} BDT
-                                                    </div>
-                                                @endif
-                                            @endif
-
-                                        </div>
-
-                                    </div>
-                                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                                    <div class="short-desc mb-30">
-                                        <p>{{ $product->short_desc }}</p>
-                                    </div>
-                                    <div class="product_sort_info font-xs mb-30">
-                                        <ul>
-                                            <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand Warranty</li>
-                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
-                                            <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
-                                        </ul>
-                                    </div>
-                                    <div class="mb-3">
-                                        <p>Availability: <span id="availabilityArea" class="ml-5 in-stock text-success">
-                                            {{ $product->qty }} Items In Stock
-                                        </span></p>
-                                    </div>
-                                    <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
-                                        @csrf
-
-                                        @if($product->productVariations->count() > 0)
-                                            <div class="attr-detail mb-15">
-                                                <p><strong class="mr-10">Choose a option</strong></p>
-                                                <div>
-                                                    <ul class="list-filter size-filter font-small" id="variationList">
-                                                        @foreach($product->productVariations as $variation)
-                                                            <li>
-                                                                <label class="size-label variation-option"
-                                                                    data-id="{{ $variation->id }}"
-                                                                    data-price="{{ $variation->price }}"
-                                                                    data-sale="{{ $variation->compare_price }}"
-                                                                    data-type="{{ $variation->type }}"
-                                                                    data-qty="{{ $variation->qty }}"
-                                                                >
-                                                                    <input type="radio" name="variation" value="{{ $variation->id }}" hidden>
-                                                                    <p class="variation-box">{{ $variation->type }}</p>
-                                                                </label>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-
                                                 </div>
-                                            </div>
-                                        @endif
+                                                @if ($product->qty > 0)
+                                                    <form method="POST" class="mt-2" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
+                                                        @csrf
+                                                        <div>
+                                                            @if ($product->productVariations->count() > 0)
+                                                                <div class="attr-detail mb-15">
+                                                                    <div>
+                                                                        <ul class="list-filter size-filter font-small" id="variationList">
+                                                                            @foreach ($product->productVariations as $variation)
+                                                                                <li>
+                                                                                    <label class="size-label variation-option"
+                                                                                        data-id="{{ $variation->id }}"
+                                                                                        data-price="{{ $variation->price }}"
+                                                                                        data-sale="{{ $variation->compare_price }}"
+                                                                                        data-type="{{ $variation->type }}"
+                                                                                        data-qty="{{ $variation->qty }}">
+                                                                                        <input type="radio" name="variation"
+                                                                                            value="{{ $variation->id }}" hidden>
+                                                                                        <p class="variation-box">{{ $variation->type }}</p>
+                                                                                    </label>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="sf__pcard-action-atc flex justify-start mt-2">
+                                                            <input name="quantity" value="1" type="hidden">
+                                                            <button type="button" aria-label="Add To Cart" onclick="submitForm(this)"
+                                                                class="btn btn-sm btn-primary action-btn hover-up">Quick Add </button>
 
-                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                        <div class="detail-extralink">
-                                            <div  style="width:12%">
-                                                <input type="number" class="form-control" name="quantity" value="1" min="1">
-                                            </div>
-
-                                            <div class="product-extra-link2">
-                                                <button type="button" onclick="submitForm(this)" class="button button-add-to-cart">Add to cart</button>
-                                                <a
-                                                    @if(auth()->check())
-                                                    @if( $product->wishlist->where('user_id', $userId)->first())
-                                                    aria-label="Remove from Wishlist"
-                                                    @else
-                                                    aria-label="Add To Wishlist"
-                                                    @endif
-                                                    @else
-                                                    @if(in_array($product->id, session()->get('wishlist', [])))
-                                                    aria-label="Remove from Wishlist"
-                                                    @else
-                                                    aria-label="Add To Wishlist"
-                                                    @endif
-                                                    @endif
-                                                    onclick="addToWishlist({{$product->id}}, this)" class="action-btn hover-up" href="javascript:void(0)">
-                                                    <!-- Check if product is in wishlist -->
-                                                    @if(auth()->check())
-                                                        @if( $product->wishlist->where('user_id', $userId)->first())
-                                                            <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart-fill"></i>
-                                                        @else
-                                                            <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart"></i>
-                                                        @endif
-                                                    @else
-                                                        @if(in_array($product->id, session()->get('wishlist', [])))
-                                                            <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart-fill"></i>
-                                                        @else
-                                                            <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart"></i>
-                                                        @endif
-                                                    @endif
-                                                </a>
+                                                        </div>
+                                                    </form>
+                                                @else
+                                                    <button aria-label="Out of Stock !"
+                                                        class="btn btn-danger btn-sm action-btn hover-up stock-out mt-2">Out of stock !</button>
+                                                @endif
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
 
 
                                     <ul class="product-meta font-xs color-grey mt-50">
@@ -407,184 +369,169 @@
                             </div>
                         </div>
 
-                        <div class="row mt-60">
+                        {{-- <div class="row mt-60">
                             <div class="col-12">
                                 <h3 class="section-title style-1 mb-30">Related products</h3>
                             </div>
                             <div class="col-12">
-                                <div class="row related-products">
-                                    @foreach($relatedProducts->product->take(4) as $product)
-                                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap mb-30">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="{{ route('products',$product->slug) }}">
-                                                        <img class="default-img" src="{{ asset($product->featured_image) }}" alt="" height="280px">
-                                                        @foreach($product->productGallery->take(1) as $image)
-                                                            <img class="hover-img" src="{{ asset($image->images) }}" alt="" height="280px">
-                                                        @endforeach
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal{{ $product->id }}"><i class="fi-rs-eye"></i></a>
-                                                    <a
-                                                        @if(auth()->check())
-                                                        @if( $product->wishlist->where('user_id', $userId)->first())
-                                                        aria-label="Remove from Wishlist"
-                                                        @else
-                                                        aria-label="Add To Wishlist"
-                                                        @endif
-                                                        @else
-                                                        @if(in_array($product->id, session()->get('wishlist', [])))
-                                                        aria-label="Remove from Wishlist"
-                                                        @else
-                                                        aria-label="Add To Wishlist"
-                                                        @endif
-                                                        @endif
-                                                        onclick="addToWishlist({{$product->id}}, this)" class="action-btn hover-up" href="javascript:void(0)">
-                                                        <!-- Check if product is in wishlist -->
-                                                        @if(auth()->check())
-                                                            @if( $product->wishlist->where('user_id', $userId)->first())
-                                                                <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart-fill"></i>
-                                                            @else
-                                                                <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart"></i>
-                                                            @endif
-                                                        @else
-                                                            @if(in_array($product->id, session()->get('wishlist', [])))
-                                                                <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart-fill"></i>
-                                                            @else
-                                                                <i id="wishlist-icon-{{$product->id}}" class="bi bi-heart"></i>
-                                                            @endif
-                                                        @endif
-                                                    </a>
+                                <div class="m-product-list relative sf-mixed-layout sf-mixed-layout--mobile-grid">
+                                    <div class="m-product-list__wrapper">
+                                        <div class="sf-mixed-layout__wrapper grid-cols-2 sf__col-5 md:grid-cols-3 xl:grid-cols-5" style="gap: 10px">
+                                            @if(isset($products))
+                                                @foreach($products->take(4) as $product)
+                                                    <div class="sf-column product-card">
+                                                        <div class="sf__pcard sf__pcard--onsale cursor-pointer sf-prod__block sf__pcard-style-4" data-view="card"
+                                                            data-product-id="8766631903454">
+                                                            <div class="sf__pcard-image  spc__img-only">
+                                                                <div class="overflow-hidden cursor-pointer relative sf__image-box">
+                                                                    <div class="flex justify-center items-center">
+                                                                        <a href="{{ route('products', $product->slug) }}" class="block w-full">
+                                                                            <div class="spc_product_main-img">
+                                                                                <img src="{{ asset($product->featured_image) }}" width="600px"
+                                                                                    style=" object-fit: cover; height: 100%;">
+                                                                            </div>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <div class="mt-3 lg:mt-5">
+                                                                    <div class="max-w-full w-full">
+                                                                        <h3 class="block text-base">
+                                                                            <a href="{{ route('products', $product->slug) }}"
+                                                                                class="block mb-[5px] leading-normal sf__pcard-name font-medium truncate-lines hover:text-color-secondary">
+                                                                                {{ $product->name }}
+                                                                            </a>
+                                                                        </h3>
 
-                                                </div>
 
-                                                @if(!empty( $product->is_featured == 'YES') )
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="hot">Featured</span>
-                                                    </div>
-                                                @elseif($product->compare_price)
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="sale">Sale</span>
-                                                    </div>
-                                                @elseif(now()->diffInDays($product->created_at) <= 30)
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="new">New</span>
-                                                    </div>
-                                                @else
-                                                    <div class="product-badges product-badges-position product-badges-mrg" style="display: none">
-                                                    </div>
-                                                @endif
+                                                                    </div>
+                                                                    <ul class="product-tags-in-grid">
+                                                                        <li>
+                                                                            <a
+                                                                                href="{{ $product->subCategory ? route('subCategoryProduct', $product->subCategory->slug) : route('categoryProduct', $product->category->slug) }}">
+                                                                                {{ $product->subCategory ? $product->subCategory->name : $product->category->name }}
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="sf__pcard-price leading-normal">
+                                                                        <div class="f-price inline-flex justify-content-center flex-wrap f-price--on-sale text-center">
+                                                                        
+                                                                            @if ($product->productVariations->count() > 0)
+                                                                                @php
+                                                                                    $variations = $product->productVariations;
 
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                    <a href="{{ route('subCategoryProduct', $product->subCategory->slug) }}">{{ $product->subCategory->name }}</a>
-                                                </div>
-                                                <h2><a href="{{ route('products',$product->slug) }}">{{ $product->name }}</a></h2>
-                                                <div class="product-rate-cover ">
-                                                    <div class="product-rate d-inline-block">
-                                                        <div class="product-rating" style="width:{{$product->ratings->where('status',1)->avg('rating') * 20}}%">
+                                                                                    
+                                                                                    $sellingPrices = $variations->map(function ($v) {
+                                                                                        return $v->compare_price && $v->compare_price > 0
+                                                                                            ? $v->compare_price
+                                                                                            : $v->price;
+                                                                                    });
+
+                                                                                    $minSelling = $sellingPrices->min();
+                                                                                    $maxSelling = $sellingPrices->max();
+
+                                                                                    
+                                                                                    $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
+
+                                                                                    
+                                                                                    $minOriginal = $variations->min('price');
+                                                                                    $maxOriginal = $variations->max('price');
+                                                                                @endphp
+
+                                                                                
+                                                                                @if ($hasSale)
+                                                                                    <div class="sf__pcard-tags absolute flex flex-wrap">
+                                                                                        <span
+                                                                                            class="py-0.5 px-2 mb-2 mr-2 font-medium rounded-xl text-white prod__tag prod__tag-sale">On
+                                                                                            Sale </span>
+                                                                                    </div>
+                                                                                    <span class="text-muted text-decoration-line-through sale-price-range originalPrice">
+                                                                                        {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }}
+                                                                                    </span>
+                                                                                    
+                                                                                    <span class="fw-bold price-range sellingPrice">
+                                                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                                                    </span>
+                                                                                @else
+                                                                                    <span class="fw-bold price-range sellingPrice">
+                                                                                        {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
+                                                                                    </span>
+                                                                                @endif
+                                                                            @else
+                                                                               
+                                                                                @if ($product->compare_price && $product->compare_price > 0)
+                                                                                    <div class="sf__pcard-tags absolute flex flex-wrap">
+                                                                                        <span
+                                                                                            class="py-0.5 px-2 mb-2 mr-2 font-medium rounded-xl text-white prod__tag prod__tag-sale">On
+                                                                                            Sale </span>
+                                                                                    </div>
+                                                                                    <span class="text-muted text-decoration-line-through sale-price originalPrice">
+                                                                                        {{ number_format($product->price) }}
+                                                                                    </span>
+                                                                                    
+                                                                                    <span class="fw-bold price sellingPrice">
+                                                                                        {{ number_format($product->compare_price) }} BDT
+                                                                                    </span>
+                                                                                @else
+                                                                                    <span class="fw-bold price sellingPrice">
+                                                                                        {{ number_format($product->price) }} BDT
+                                                                                    </span>
+                                                                                @endif
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if ($product->qty > 0)
+                                                                    <form method="POST" class="mt-2" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
+                                                                        @csrf
+                                                                        <div>
+                                                                            @if ($product->productVariations->count() > 0)
+                                                                                <div class="attr-detail mb-15">
+                                                                                    <div>
+                                                                                        <ul class="list-filter size-filter font-small" id="variationList">
+                                                                                            @foreach ($product->productVariations as $variation)
+                                                                                                <li>
+                                                                                                    <label class="size-label variation-option"
+                                                                                                        data-id="{{ $variation->id }}"
+                                                                                                        data-price="{{ $variation->price }}"
+                                                                                                        data-sale="{{ $variation->compare_price }}"
+                                                                                                        data-type="{{ $variation->type }}"
+                                                                                                        data-qty="{{ $variation->qty }}">
+                                                                                                        <input type="radio" name="variation"
+                                                                                                            value="{{ $variation->id }}" hidden>
+                                                                                                        <p class="variation-box">{{ $variation->type }}</p>
+                                                                                                    </label>
+                                                                                                </li>
+                                                                                            @endforeach
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                        </div>
+                                                                        <div class="sf__pcard-action-atc flex justify-center mt-2">
+                                                                            <input name="quantity" value="1" type="hidden">
+                                                                            <button type="button" aria-label="Add To Cart" onclick="submitForm(this)"
+                                                                                class="btn btn-sm btn-primary action-btn hover-up">Quick Add </button>
+
+                                                                        </div>
+                                                                    </form>
+                                                                @else
+                                                                    <button aria-label="Out of Stock !"
+                                                                        class="btn btn-danger btn-sm action-btn hover-up stock-out mt-2">Out of stock !</button>
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <span class="font-small ml-5 text-muted"> {{$product->ratings->where('status',1)->count()}}</span>
-                                                </div>
-                                                <div class="product-price">
-                                                    
-                                                    @if ($product->productVariations->count() > 0)
-
-                                                        @php
-                                                            $variations = $product->productVariations;
-
-                                                            // Calculate selling price for each variation
-                                                            $sellingPrices = $variations->map(function ($v) {
-                                                                return $v->compare_price && $v->compare_price > 0
-                                                                    ? $v->compare_price
-                                                                    : $v->price;
-                                                            });
-
-                                                            $minSelling = $sellingPrices->min();
-                                                            $maxSelling = $sellingPrices->max();
-
-                                                            // Check if ANY variation has compare_price
-                                                            $hasSale = $variations->where('compare_price', '>', 0)->count() > 0;
-
-                                                            // For showing crossed price, we still need original ranges
-                                                            $minOriginal = $variations->min('price');
-                                                            $maxOriginal = $variations->max('price');
-                                                        @endphp
-
-                                                        {{-- IF THERE ARE SALE PRICES --}}
-                                                        @if ($hasSale)
-                                                            <span class="text-muted text-decoration-line-through">
-                                                                {{ number_format($minOriginal) }} - {{ number_format($maxOriginal) }} BDT
-                                                            </span>
-                                                            <br>
-                                                            <span class="fw-bold">
-                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
-                                                            </span>
-
-                                                        {{-- NO SALE PRICE --}}
-                                                        @else
-                                                            <span class="fw-bold">
-                                                                {{ number_format($minSelling) }} - {{ number_format($maxSelling) }} BDT
-                                                            </span>
-                                                        @endif
-
-                                                    @else
-                                                        {{-- NO VARIATIONS --}}
-                                                        @if ($product->compare_price && $product->compare_price > 0)
-                                                            <span class="text-muted text-decoration-line-through">
-                                                                {{ number_format($product->price) }} BDT
-                                                            </span>
-                                                            <br>
-                                                            <span class="fw-bold">
-                                                                {{ number_format($product->compare_price) }} BDT
-                                                            </span>
-                                                        @else
-                                                            <span class="fw-bold">
-                                                                {{ number_format($product->price) }} BDT
-                                                            </span>
-                                                        @endif
-                                                    @endif
-                                                </div>
-                                                <div class="product-action-1 show">
-                                                    @if($product->track_qty == 'YES')
-                                                        @if($product->qty > 0)
-                                                            @if($product->productVariations->count() > 0)
-                                                                <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
-                                                            @else
-                                                                <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
-                                                                    @csrf
-                                                                    <input name="quantity" value="1" type="hidden">
-                                                                    <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"></i></button>
-                                                                </form>
-                                                            @endif
-                                                        @else
-                                                            <button aria-label="Out of Stock !" class="action-btn hover-up stock-out">  <i class="fi-rs-shopping-bag-add"></i> </button>
-                                                        @endif
-
-                                                    @else
-                                                        @if($product->productVariations->count() > 0)
-                                                            <a aria-label="Select options" class="action-btn hover-up" href="{{ route('products', $product->slug) }}"> <i class="fi-rs-shopping-bag-add"></i> </a>
-                                                        @else
-                                                            <form method="POST" action="{{ route('addToCart', $product->id) }}" id="addToCartForm">
-                                                                @csrf
-                                                                <input name="quantity" value="1" type="hidden">
-                                                                <button type="button" aria-label="Add To Cart" onclick="submitForm(this)" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"></i></button>
-                                                            </form>
-                                                        @endif
-                                                    @endif
-
-                                                </div>
-                                            </div>
+                                                @endforeach
+                                            @else
+                                                No Products Available Now
+                                            @endif
                                         </div>
                                     </div>
-                                    @endforeach
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>
@@ -595,85 +542,6 @@
 
 
 @section('customJs')
-    <script>
-        // jQuery code to handle radio button change event for size options
-        $('input[name="size"]').change(function() {
-            // Remove the background color from all size labels
-            $('.size-label').css('background-color', '');
-
-            // Remove the 'selected' class from all size labels
-            $('.size-label').removeClass('selected');
-
-            // Add the background color and 'selected' class to the size option corresponding to the selected radio button
-            if ($(this).is(':checked')) {
-                var selectedLabel = $(this).closest('label.size-label');
-                selectedLabel.addClass('selected');
-                selectedLabel.css('background-color', '#008178').find('p').css('color', 'white');
-            }
-        });
-    </script>
-
-
-    <!-- Script for color options -->
-    <script>
-        // jQuery code to handle radio button change event for color options
-        $('input[name="color"]').change(function() {
-            // Remove the 'selected' class from all color options
-            $('.color-option').removeClass('selected');
-
-            // Add the 'selected' class to the color option corresponding to the selected radio button
-            if ($(this).is(':checked')) {
-                $(this).closest('.color-option').addClass('selected');
-            }
-        });
-    </script>
-
-    <script>
-document.querySelectorAll('.variation-option').forEach(option => {
-    option.addEventListener('click', function() {
-
-        // Remove selection from all
-        document.querySelectorAll('.variation-option').forEach(o => {
-            o.classList.remove('variation-selected');
-            o.querySelector('input').checked = false;
-        });
-
-        // Add selected class
-        this.classList.add('variation-selected');
-        this.querySelector('input').checked = true;
-
-        // Get data
-        let price = parseFloat(this.dataset.price);
-        let sale = parseFloat(this.dataset.sale);
-        let qty   = parseInt(this.dataset.qty);   // NEW
-
-        // Update price area
-        let html = "";
-
-        if (sale > 0) {
-            html += `
-                <div class="text-muted text-decoration-line-through">
-                    ${price.toLocaleString()} BDT
-                </div>
-                <div class="fw-bold fs-4">
-                    ${sale.toLocaleString()} BDT
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="fw-bold fs-4">
-                    ${price.toLocaleString()} BDT
-                </div>
-            `;
-        }
-
-        document.getElementById('priceArea').innerHTML = html;
-
-        document.getElementById('availabilityArea').innerHTML =
-            `<span class="in-stock text-success ml-5">${qty} Items In Stock</span>`;
-    });
-});
-</script>
 
 
 @endsection

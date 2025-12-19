@@ -17,13 +17,14 @@
 
     <section class="container pt-50">
         <h1 class="text-center text-success"> Thank You for you order ! </h1>
-        <div class="d-flex align-items-center justify-content-center mt-20" style="column-gap: 20px">
+        <div class="d-flex align-items-center justify-content-center mt-20 flex-wrap" style="column-gap: 20px ; row-gap: 10px;">
             @if(\Illuminate\Support\Facades\Auth::check())
                 <a href="{{ route('user.profile') }}" class="btn btn-sm btn-primary"> View Orders </a>
             @else
                 <a href="{{ route('home') }}" class="btn btn-sm btn-primary"> Home </a>
             @endif
-            <a href="{{ route('shop') }}" class="btn btn-sm btn-success"> Continue Shopping </a>
+            <a href="{{ route('shop') }}" class="btn btn-sm btn-success"><i class="fa-solid fa-bag-shopping"></i> Continue Shopping </a>
+            <a class="btn btn-sm btn-primary" href="{{ asset($order->invoice) }}" target="_blank"><i class="fa-solid fa-download"></i> Download Invoice </a>
         </div>
     </section>
 
@@ -108,15 +109,18 @@
                     <div class="card-footer row">
                         <div class="col-md-10 p-2 mobile-ship-width">
                             <h5> Shipping Details :</h5> <hr class="w-25">
-                            <p> Name : {{ $order->first_name }} {{ $order->last_name }} </p>
+                            <p> Name : {{ $order->name }} </p>
                             <p> Email : {{ $order->email }} </p>
                             <p> Phone : {{ $order->phone }} </p>
                             <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                             <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
                             <p> Payment Method : {{ $order->payment_option }} </p>
-                            <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
-                            <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
+                            @if ($order->payment_option != 'Cash on Delivery')
+                                <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                                <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
+                            @endif
+                            
                         </div>
                         <div class="col-md-2 d-flex flex-column align-items-center mobile-price-width">
                             <p class="text-center"> SubTotal : <strong>{{ $order->subtotal }} Tk </strong></p>

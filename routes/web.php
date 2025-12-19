@@ -37,6 +37,7 @@ use App\Http\Controllers\SaleReports;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\OrdersExport;
 use App\Http\Controllers\AdminAccessController;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/shop/{categorySlug?}/{subCategorySlug?}',[ShopController::class,'index'])->name('shop');
@@ -44,7 +45,7 @@ Route::get('/product/{slug}/',[ProductDetailsController::class,'index'])->name('
 Route::get('/cart',[CartController::class,'cart'])->name('cart');
 Route::post('/add-to-cart/{id}',[CartController::class,'addToCart'])->name('addToCart');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('updateCart');
-Route::get('/remove-from-cart/{rowId}', [CartController::class,'removeFromCart'])->name('removeFromCart');
+Route::post('/remove-from-cart', [CartController::class,'removeFromCart'])->name('removeFromCart');
 Route::get('/clear-cart', [CartController::class,'clearCart'])->name('clearCart');
 Route::get('/get-cart-details', [CartController::class ,'getCartDetails'])->name('getCartDetails');
 Route::get('/checkout', [CartController::class ,'checkout'])->name('checkout');
@@ -67,6 +68,15 @@ Route::get('/category/{slug}/{categorySlug?}/{subCategorySlug?}', [CategoryProdu
 Route::get('/sub_category/{slug}/{categorySlug?}/{subCategorySlug?}', [CategoryProductController::class ,'subCategoryProduct'])->name('subCategoryProduct');
 Route::get('/load-more-products', [HomeController::class, 'loadMoreProducts'])->name('load-more-products');
 
+Route::get('/cart/sidebar', function () {
+    return response()->json([
+        'cartContent' => Cart::content(),
+        'cartSubtotal' => Cart::subtotal(),
+    ]);
+})->name('cart.sidebar');
+
+Route::get('/checkout/cart-data', [CheckoutController::class, 'cartData'])
+     ->name('checkout.cart.data');
 
 Route::group(['prefix' => 'account'],function(){
     Route::group(['middleware' => 'guest'],function(){

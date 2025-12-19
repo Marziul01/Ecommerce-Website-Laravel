@@ -48,7 +48,6 @@ class Order extends Model
             Auth::login(self::$auth);
             $user = self::$auth->id;
         } elseif (Auth::check()) {
-            // If the user is already logged in, set $user to the logged-in user's ID
             $user = Auth::user()->id;
         }
 
@@ -57,13 +56,12 @@ class Order extends Model
 
             $userInfo = Userinfo::where('user_id', $user)->first();
             if (!$userInfo) {
-                // If user info doesn't exist, create/update it
                 Userinfo::updateInfo($user, $request, $address);
             }
         }
 
         $subtotall = Cart::subtotal(2,'.','');
-        $shipping = $request->shipping_charge;
+        $shipping = $request->shipping_charge; 
         if (isset($request->discount_charge)){
             $discount = $request->discount_charge;
         }else{
@@ -79,8 +77,7 @@ class Order extends Model
         self::$order->discount = $discount;
         self::$order->grand_total = $grandTotall;
         self::$order->coupon_code = $coupon_code;
-        self::$order->first_name = ($request->shipping == 'Yes') ? $request->shipping_first_name : $request->first_name;
-        self::$order->last_name = ($request->shipping == 'Yes') ? $request->shipping_last_name : $request->last_name;
+        self::$order->name = $request->name;
         self::$order->email = $request->email;
         self::$order->phone = ($request->shipping == 'Yes') ? $request->shipping_phone : $request->phone;
         self::$order->country_id = $countryId;

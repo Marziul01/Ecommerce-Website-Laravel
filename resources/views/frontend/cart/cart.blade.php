@@ -31,7 +31,7 @@
                                     <th scope="col">Price</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Subtotal</th>
-                                    <th scope="col">Remove</th>
+                                    {{-- <th scope="col">Remove</th> --}}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -51,14 +51,15 @@
                                             <td class="text-center" data-title="Stock">
                                                 <div style="display: flex; align-items: center;justify-content: center">
                                                     <div style="width:25%">
-                                                        <input type="number" class="form-control" name="quantity[{{ $item->rowId }}]" value="{{ $item->qty }}" min="1">
+                                                        {{-- <input type="number" class="form-control" name="quantity[{{ $item->rowId }}]" value="{{ $item->qty }}" min="1"> --}}
+                                                        <span>{{ $item->qty }}</span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="text-right" data-title="Cart">
+                                            <td class="text-center" data-title="Cart">
                                                 <span>{{ $item->price*$item->qty }} Tk</span>
                                             </td>
-                                            <td class="action" data-title="Remove"><a href="{{ route('removeFromCart', $item->rowId) }}" class=""><i class="fi-rs-trash"></i></a></td>
+                                            {{-- <td class="action" data-title="Remove"><a href="{{ route('removeFromCart', $item->rowId) }}" class=""><i class="fi-rs-trash"></i></a></td> --}}
                                         </tr>
                                     @endforeach
                                 @else
@@ -97,8 +98,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</button>
-                            <a href="{{ route('checkout') }}" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                            {{-- <button type="submit" class="btn mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</button> --}}
+                            {{-- <a href="{{ route('checkout') }}" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a> --}}
                         </div>
                     </form>
                 </div>

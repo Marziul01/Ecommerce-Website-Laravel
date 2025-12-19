@@ -43,7 +43,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $order->order_number }}</td>
-                                <td>{{ $order->first_name }}</td>
+                                <td>{{ $order->name }}</td>
                                 <td>{{ $order->phone }}</td>
                                 <td><button class="btn btn-sm btn-danger">Cancelled</button></td>
                                 <td>{{ $order->grand_total }}</td>

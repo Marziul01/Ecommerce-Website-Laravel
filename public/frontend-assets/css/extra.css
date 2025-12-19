@@ -3,7 +3,7 @@
     font-weight: 400;
     font-style: normal;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_n4.a7efb558ca22d2002248bbe6f302a98edee38e35.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_n4.0da809f7d1d5ede2a73be7094ac00741efdb6387.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_n4.a7efb558ca22d2002248bbe6f302a98edee38e35.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_n4.0da809f7d1d5ede2a73be7094ac00741efdb6387.woff") format("woff");
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     font-weight: 700;
     font-style: normal;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
 }
 
 :root {
@@ -27,7 +27,7 @@
     font-weight: 400;
     font-style: normal;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_n4.a7efb558ca22d2002248bbe6f302a98edee38e35.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_n4.0da809f7d1d5ede2a73be7094ac00741efdb6387.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_n4.a7efb558ca22d2002248bbe6f302a98edee38e35.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_n4.0da809f7d1d5ede2a73be7094ac00741efdb6387.woff") format("woff");
 }
 
 @font-face {
@@ -35,7 +35,7 @@
     font-weight: 700;
     font-style: normal;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
 }
 
 @font-face {
@@ -43,7 +43,7 @@
     font-weight: 700;
     font-style: normal;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_n7.1d2d0638e6a1228d86beb0e10006e3280ccb2d04.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_n7.f4b9139e8eac4a17b38b8707044c20f54c3be479.woff") format("woff");
 }
 
 @font-face {
@@ -51,7 +51,7 @@
     font-weight: 400;
     font-style: italic;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_i4.438ddb21a1b98c7230698d70dc1a21df235701b2.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_i4.0e1908a0dc1ec32fabb5a03a0c9ee2083f82e3d7.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_i4.438ddb21a1b98c7230698d70dc1a21df235701b2.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_i4.0e1908a0dc1ec32fabb5a03a0c9ee2083f82e3d7.woff") format("woff");
 }
 
 @font-face {
@@ -59,7 +59,7 @@
     font-weight: 700;
     font-style: italic;
     font-display: swap;
-    src: url("cdn/fonts/arimo/arimo_i7.b9f09537c29041ec8d51f8cdb7c9b8e4f1f82cb1.woff2") format("woff2"), url("cdn/fonts/arimo/arimo_i7.ec659fc855f754fd0b1bd052e606bba1058f73da.woff") format("woff");
+    src: url("../cdn/fonts/arimo/arimo_i7.b9f09537c29041ec8d51f8cdb7c9b8e4f1f82cb1.woff2") format("woff2"), url("../cdn/fonts/arimo/arimo_i7.ec659fc855f754fd0b1bd052e606bba1058f73da.woff") format("woff");
 }
 
 :root {

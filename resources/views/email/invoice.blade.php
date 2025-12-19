@@ -80,7 +80,7 @@
 <body>
 <div class="card">
     <div class="card-header text-center">
-        <img src="{{ asset('frontend-assets/imgs/theme/logo.svg') }}" class="text-center w-25">
+        <img src="{{ asset($siteSettings->logo) }}" class="text-center w-25">
         <h1 class="text-center"> Thanks for your order !! </h1>
         <p class="text-center">Order Number: {{ $order->order_number }} </p>
     </div>
@@ -116,13 +116,18 @@
                         <tr style="border: none;">
                             <td class="row1-col3" style="border: none; border-right: 1px solid black !important;">
                                 <h5> Shipping Details :</h5> <hr class="w-25">
-                                <p> Name : {{ $order->first_name }} {{ $order->last_name }} </p>
+                                <p> Name : {{ $order->name }}</p>
+                                @if($order->email)
                                 <p> Email : {{ $order->email }} </p>
+                                @endif
                                 <p> Phone : {{ $order->phone }} </p>
                                 <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                                 <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
                                 <p> Payment Method : {{ $order->payment_option }} </p>
+                                @if ($order->payment_option != 'Cash on Delivery')
+                                    <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                                @endif
                             </td>
                             <td class="row1-col2" style="border: none;">
                                 <p class=""> SubTotal : <strong>{{ $order->subtotal }} Tk </strong> </p>

@@ -4,6 +4,7 @@ namespace App\Mail;
 
 
 use App\Models\Order;
+use App\Models\SiteSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -49,8 +50,12 @@ class OrderEmail extends Mailable
 //    }
     public function build()
     {
+        $siteSetting = SiteSetting::where('id', 1)->first();
         return $this->subject('Your order has been placed !!')
-            ->from('marziulhaque08@gmail.com', 'Evara')
+            ->from(
+                $siteSetting?->email ?? config('mail.from.address'),
+                $siteSetting?->title ?? config('mail.from.name')
+                )
             ->view('email.order')
             ->attachData($this->orderData['pdf'], 'Invoice_' . $this->orderData['id'] . '.pdf', [
                 'mime' => 'application/pdf',

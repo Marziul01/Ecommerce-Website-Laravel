@@ -27,11 +27,20 @@ class UserAuthController extends Controller
     private static $auth;
 
     public function userAuth(){
+        if (Auth::check()) {
+            return redirect()
+                ->route('user.profile')
+                ->with('info', 'You are already logged in.');
+        }
+
         return view('frontend.auth.auth', [
-            'siteSettings' => SiteSetting::where('id', 1)->first(),
-            'categories' => Category::orderBy('name', 'ASC')->where('status', '1')->with('sub_category')->get(),
-            'cartContent' => Cart::content(),
-            ]);
+            'siteSettings' => SiteSetting::find(1),
+            'categories'   => Category::where('status', 1)
+                                    ->orderBy('name', 'ASC')
+                                    ->with('sub_category')
+                                    ->get(),
+            'cartContent'  => Cart::content(),
+        ]);
     }
 
     public static function userRegister(Request $request){
@@ -86,9 +95,9 @@ class UserAuthController extends Controller
         if($validator->passes()) {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password],$request->get('remember'))){
 
-                if (session()->has('url.intended')){
-                    return redirect(session()->get('url.intended'));
-                }
+                // if (session()->has('url.intended')){
+                //     return redirect(session()->get('url.intended'));
+                // }
 
                 return redirect()->route('user.profile');
             }else{

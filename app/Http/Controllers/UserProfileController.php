@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Hash;
 class UserProfileController extends Controller
 {
     public static function index(){
-
+        if(!Auth::check()){
+            return redirect(route('userAuth'));
+        }
         $orders = Order::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
         $country = Country::where('code', 'BD')->first();
         $states = explode(',', $country->states);

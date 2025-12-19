@@ -44,7 +44,7 @@ Delivered Orders
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $order->order_number }}</td>
-                                <td>{{ $order->first_name }}</td>
+                                <td>{{ $order->name }}</td>
                                 <td>{{ $order->phone }}</td>
                                 <td><button class="btn btn-sm btn-success">Delivered</button></td>
                                 <td><button class="btn btn-sm btn-success">Paid</button><br>

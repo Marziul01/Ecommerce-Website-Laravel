@@ -9,7 +9,7 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="{{ route('home') }}" rel="nofollow">Home</a>
+                <a href="{{ route('home') }}">Home</a>
                 <span></span> Login / Register
             </div>
         </div>

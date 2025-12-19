@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 class CheckoutController extends Controller
 {
@@ -27,5 +28,15 @@ class CheckoutController extends Controller
                 ->withErrors($validator)
                 ->withInput($request->only('email'));
         }
+    }
+
+    public function cartData()
+    {
+        return response()->json([
+            'cartContent'  => Cart::content(),
+            'cartSubtotal' => Cart::subtotal(),
+            'cartTotal'    => Cart::subtotal(), // adjust if shipping/discount
+            'cartCount'    => Cart::count(),
+        ]);
     }
 }

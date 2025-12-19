@@ -116,15 +116,20 @@
                         <div class="card-footer row">
                             <div class="col-md-10 p-2 mobile-ship-width">
                                 <h5> Shipping Details :</h5> <hr class="w-25">
-                                <p> Name : {{ $order->first_name }} {{ $order->last_name }} </p>
-                                <p> Email : {{ $order->email }} </p>
+                                <p> Name : {{ $order->name }}</p>
+                                @if ({{ $order->email }})
+                                    <p> Email : {{ $order->email }} </p>  
+                                @endif
                                 <p> Phone : {{ $order->phone }} </p>
                                 <p> Address: {{ $order->address }} , {{ $order->state }} , {{ $order->country->name }}</p>
 
                                 <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
                                 <p> Payment Method : {{ $order->payment_option }} </p>
-                                <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
-                                <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
+                                @if ($order->payment_option != 'Cash on Delivery')
+                                    <p> Transaction Id / Bank Account Number : {{ $order->payment_number }} </p>
+                                    <p> Payment Screenshot : <img src="{{ asset($order->payment_prove) }}" width="100%" > </p>
+                                @endif
+                                
                             </div>
                             <div class="col-md-2 d-flex flex-column align-items-center mobile-price-width">
                                 <p class="text-center"> SubTotal : <strong>{{ $order->subtotal }} Tk </strong> </p>

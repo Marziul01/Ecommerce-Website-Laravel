@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\SiteSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -29,10 +30,14 @@ class OrderAdminEmail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $siteSetting = SiteSetting::where('id', 1)->first();
         return new Envelope(
-            subject: 'New Order has been placed !!',
-            from: new Address('marziulhaque08@gmail.com' , 'Evara'),
-        );
+        subject: 'New Order has been placed !!',
+        from: new Address(
+            $siteSetting?->email ?? config('mail.from.address'),
+            $siteSetting?->title ?? config('mail.from.name')
+        ),
+    );
     }
 
     /**

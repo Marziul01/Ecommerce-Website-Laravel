@@ -62,7 +62,7 @@
 <body>
     <div class="card">
         <div class="card-header text-center">
-            <img src="{{ asset('frontend-assets/imgs/theme/logo.svg') }}" class="text-center w-25">
+            <img src="{{ public_path($siteSettings->logo) }}" class="text-center w-25">
             <h1 class="text-center"> Thanks for your order !! </h1>
             <p class="text-center">Order Number: {{ $orderData['order']->order_number }} </p>
         </div>
@@ -99,13 +99,18 @@
                 <div class="d-flex justify-content-between" style="border-bottom: 0px !important;">
                     <div class="col-md-10 border-right">
                         <h5> Shipping Details :</h5> <hr class="w-25">
-                        <p> Name : {{ $orderData['order']->first_name }} {{ $orderData['order']->last_name }} </p>
+                        <p> Name : {{ $orderData['order']->name }}  </p>
+                        @if($orderData['order']->email)
                         <p> Email : {{ $orderData['order']->email }} </p>
+                        @endif
                         <p> Phone : {{ $orderData['order']->phone }} </p>
                         <p> Address: {{ $orderData['order']->address }} , {{ $orderData['order']->state }} , {{ $orderData['order']->country->name }}</p>
 
                         <h5 class="mt-4"> Payment Details :</h5> <hr class="w-25">
                         <p> Payment Method : {{ $orderData['order']->payment_option }} </p>
+                        @if ($orderData['order']->payment_option != 'Cash on Delivery')
+                            <p> Transaction Id / Bank Account Number : {{ $orderData['order']->payment_number }} </p>
+                        @endif
                     </div>
                     <div class="col-md-2 flex-column align-items-center justify-content-around" style="border-bottom: 0px !important; flex-direction: column;">
                         <p class=""> SubTotal : <strong>{{ $orderData['order']->subtotal }} Tk </strong> </p>
