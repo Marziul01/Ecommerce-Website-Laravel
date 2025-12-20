@@ -117,7 +117,7 @@
                             <div class="col-md-10 p-2 mobile-ship-width">
                                 <h5> Shipping Details :</h5> <hr class="w-25">
                                 <p> Name : {{ $order->name }}</p>
-                                @if ({{ $order->email }})
+                                @if ( $order->email )
                                     <p> Email : {{ $order->email }} </p>  
                                 @endif
                                 <p> Phone : {{ $order->phone }} </p>
