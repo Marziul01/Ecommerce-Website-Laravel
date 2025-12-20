@@ -92,7 +92,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    "{{ $review->product->name }}" Product Review
+                    "{{ $review->product ? $review->product->name : '' }}" Product Review
                     <div>
                         @if($review->status == 1)
                             <i class="bi bi-check-circle-fill" style="color: deepskyblue"></i> Approved
@@ -105,7 +105,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h6> Product Name : </h6>
-                            <p>{{ $review->product->name }}</p>
+                            <p>{{ $review->product ? $review->product->name : 'Product has been deleted'  }}</p>
                         </div>
                         <div class="col-md-6">
                             <h6> Reviewer Name :</h6>
