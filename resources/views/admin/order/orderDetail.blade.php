@@ -95,13 +95,18 @@
                             @foreach($order->orderItems as $item)
                                 <div class="d-flex justify-content-between border mobile-table">
                                     <div class="col-md-8 d-flex p-2 border-right mobile-table-td" style="column-gap: 50px; flex-direction: column">
-                                        <a href="{{ route('products', $item->product->slug) }}"><img src="{{ asset($item->product->featured_image) }}" width="100px"></a>
-                                        <div>
-                                            <a href="{{ route('products', $item->product->slug) }}"><h4> {{ $item->product_name }} </h4></a>
-                                            <p class="">
-                                                 @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
-                                            </p>
-                                        </div>
+                                        @if ($item->product)
+                                           <a href="{{ route('products', $item->product->slug) }}"><img src="{{ asset($item->product->featured_image) }}" width="100px"></a>
+                                            <div>
+                                                <a href="{{ route('products', $item->product->slug) }}"><h4> {{ $item->product_name }} </h4></a>
+                                                <p class="">
+                                                    @if(isset($item->product_variations_id)) Option : {{ $item->productVariation?->type }} @endif
+                                                </p>
+                                            </div> 
+                                        @else
+                                        Product has been Deleted
+                                        @endif
+                                        
                                     </div>
                                     <div class="col-md-2 border-right">
                                         <p style="padding-top: 16px"> {{ $item->qty }} </p>
