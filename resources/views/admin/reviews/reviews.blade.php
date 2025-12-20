@@ -41,7 +41,7 @@
                         @foreach($reviews as $review)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $review->product->name }}</td>
+                                <td>{{ $review->product ? $review->product->name : 'Product has been Deleted' }}</td>
                                 <td>{{ $review->name }}</td>
                                 <td>{{ $review->email }}</td>
                                 <td>{{ $review->rating }}</td>
