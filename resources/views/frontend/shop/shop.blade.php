@@ -235,9 +235,8 @@
                         </div>
                     </div>
 
-                    <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                    <div class="pagination-area d-flex justify-content-center mt-15 mb-sm-5 mb-lg-0">
                         {{ $products->withQueryString()->links() }}
-
                     </div>
                 </div>
                 <div id="filterOverlay"></div>

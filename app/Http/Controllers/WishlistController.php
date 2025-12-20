@@ -15,7 +15,7 @@ class WishlistController extends Controller
 {
 
     public static function index(){
-
+        return redirect(route('home'));
         if (Auth::check()){
             $wishlists = Wishlist::where('user_id', Auth::user()->id)->get();
         }else{

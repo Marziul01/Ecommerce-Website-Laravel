@@ -31,7 +31,7 @@
                         </div>
                         <div class="sort-by-product-area">
                             <div class="sort-by-cover mr-10">
-                                <select name="show" id="show" class="form-control">
+                                <select name="show" id="show" class="form-control m-0">
 
                                     <option value="">Show:</option>
                                     <option value="50" {{ $show == 50 ? 'selected' : '' }}>50</option>
@@ -43,7 +43,7 @@
                                 </select>
                             </div>
                             <div class="sort-by-cover">
-                                <select name="sort" id="sort" class="form-control">
+                                <select name="sort" id="sort" class="form-control m-0">
 
                                     <option value="latest" {{ $sort == 'latest' ? 'selected' : '' }}>Latest</option>
                                     <option value="featured" {{ $sort == 'featured' ? 'selected' : '' }}>Featured</option>
@@ -52,6 +52,10 @@
 
                                 </select>
                             </div>
+                            <button id="openFilter" type="button"
+                                class="btn btn-sm btn-outline-dark d-lg-none">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
                         </div>
                     </div>
                     <div class="m-product-list relative sf-mixed-layout sf-mixed-layout--mobile-grid">
@@ -213,22 +217,11 @@
                     <!--pagination-->
                     <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                         {{ $products->withQueryString()->links() }}
-
-
-                        {{--                        <nav aria-label="Page navigation example">--}}
-                        {{--                            <ul class="pagination justify-content-start">--}}
-                        {{--                                <li class="page-item active"><a class="page-link" href="#">01</a></li>--}}
-                        {{--                                <li class="page-item"><a class="page-link" href="#">02</a></li>--}}
-                        {{--                                <li class="page-item"><a class="page-link" href="#">03</a></li>--}}
-                        {{--                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>--}}
-                        {{--                                <li class="page-item"><a class="page-link" href="#">16</a></li>--}}
-                        {{--                                <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>--}}
-                        {{--                            </ul>--}}
-                        {{--                        </nav>--}}
                     </div>
                 </div>
-
-                <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                <div id="filterOverlay"></div>
+                <div id="mobileFilterSidebar" class="col-lg-3 primary-sidebar sticky-sidebar">
+                    <button class="filter-close d-lg-none" id="closeFilter">×</button>
                     <div class="sidebar-widget price_range range mb-30">
                         <div class="widget-header position-relative mb-20 pb-10">
                             <h5 class="widget-title mb-10">Fill by price</h5>
@@ -244,32 +237,7 @@
                             </div>
                         </div>
                     </div>
-{{--                    <div class="widget-category mb-30">--}}
-{{--                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>--}}
-{{--                        @if(isset($categories))--}}
-{{--                            @foreach($categories as $category)--}}
-{{--                                @if($category->sub_category->isNotEmpty())--}}
-{{--                                    <a class="" data-bs-toggle="collapse" href="#collapse{{ $category->id }}" role="button" aria-expanded="false" aria-controls="collapseExample">--}}
-{{--                                        <p class="mt-2">{{ $category->name }}<i class="bi bi-chevron-down" style="margin-left: 30px"></i></p>--}}
-{{--                                    </a>--}}
-{{--                                @else--}}
-{{--                                    <a href="{{route('shop', $category->slug) }}"><p class="mt-2" style="{{ ($categorySelected == $category->id) ? 'color: #088178;' : '' }}">{{ $category->name }}</p></a>--}}
-{{--                                @endif--}}
-{{--                                <div class="collapse {{ ($categorySelected == $category->id) ? 'show' : '' }}" id="collapse{{ $category->id }}">--}}
-{{--                                    <div class="">--}}
-{{--                                        <ul class="categories">--}}
-{{--                                            @foreach($category->sub_category->where('status', 1) as $subCategory)--}}
-{{--                                                <li><a href="{{route('shop', [$category->slug,$subCategory->slug]) }}" style="{{ ($subCategorySelected == $subCategory->id) ? 'color: #088178;' : '' }}">{{ $subCategory->name }}</a></li>--}}
-{{--                                            @endforeach--}}
-{{--                                        </ul>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
 
-{{--                            @endforeach--}}
-{{--                        @endif--}}
-
-{{--                    </div>--}}
-                    <!-- Fillter By Brand -->
                     <div class="widget-category mb-30">
                         <h5 class="section-title style-1 mb-30 wow fadeIn animated">Brand</h5>
                         @if(isset($brands))
@@ -290,6 +258,28 @@
 @endsection
 
 @section('customJs')
+<script>
+    const openBtn = document.getElementById('openFilter');
+    const closeBtn = document.getElementById('closeFilter');
+    const sidebar = document.getElementById('mobileFilterSidebar');
+    const filterOverlay = document.getElementById('filterOverlay');
+
+    function openFilter() {
+        sidebar.classList.add('active');
+        filterOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilter() {
+        sidebar.classList.remove('active');
+        filterOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    openBtn?.addEventListener('click', openFilter);
+    closeBtn?.addEventListener('click', closeFilter);
+    filterOverlay?.addEventListener('click', closeFilter);
+</script>
     <script>
 
         rangeSlider = $(".js-range-slider").ionRangeSlider({

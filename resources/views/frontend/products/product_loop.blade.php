@@ -8,8 +8,21 @@
                         <div class="flex justify-center items-center">
                             <a href="{{ route('products', $product->slug) }}" class="block w-full">
                                 <div class="spc_product_main-img">
-                                    <img src="{{ asset($product->featured_image) }}" width="600px"
-                                        style=" object-fit: cover; height: 100%;">
+                                    {{-- <img src="{{ asset($product->featured_image) }}" width="600px"
+                                        style=" object-fit: cover; height: 100%;" alt="{{ $product->name }}"> --}}
+                                        <img
+    src="{{ asset($product->featured_image) }}"
+    width="600"
+    height="600"
+    @if($loop->first)
+        fetchpriority="high"
+    @else
+        loading="lazy"
+    @endif
+    decoding="async"
+    class="w-full h-full object-cover"
+    alt="{{ $product->name }}"
+>
                                 </div>
                             </a>
                         </div>

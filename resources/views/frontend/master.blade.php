@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
     <meta name="theme-color" content="#fc8934">
     <link rel="canonical" href="{{ route('home') }}">
+    <meta name="description" content="{{ $siteSettings->tagline }}">
     <link rel="shortcut icon" href="{{ asset($siteSettings->favicon) }}" type="image/png">
     <title class="index">{{ $siteSettings->title }} | @yield('title')</title>
     <meta property="og:site_name" content="{{ $siteSettings->title }}">

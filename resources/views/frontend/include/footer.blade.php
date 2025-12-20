@@ -135,7 +135,7 @@
 
 
     <div class="footer__common-item">
-        <a href="javascript:void(0)"
+        <button type="button"
             class="relative py-2 px-2 cursor-pointer cart-icon sf-cart-icon m-cart-icon-bubble openCartBtn">
             <span class="sf__tooltip-item block sf__tooltip-bottom sf__tooltip-style-2">
                 <svg class="w-[20px] h-[20px]" fill="currentColor" stroke="currentColor"
@@ -148,7 +148,7 @@
             <span class="m-cart-count-bubble sf-cart-count font-medium {{ $cartCount > 0 ? '' : 'hidden' }}">
                 {{ $cartCount }}
             </span>
-        </a>
+        </button>
 
     </div>
 
